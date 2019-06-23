@@ -35,12 +35,14 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
+        // ReSharper disable once InconsistentNaming
         private static void TestNoGC (TestDelegate code) {
             code();
             Assert.That(code:code, constraint:Is.Not.AllocatingGCMemory());
         }
         
         //--------------------------------------------------------------------------------------------------------------
+        // ReSharper disable once InconsistentNaming
         private static void TestNoGC<TResult> (Func<TResult> code, TResult expected) {
             var result = code();
             Assert.That(code:delegate { code(); }, constraint:Is.Not.AllocatingGCMemory());
