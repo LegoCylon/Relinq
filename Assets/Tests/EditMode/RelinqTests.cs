@@ -199,6 +199,27 @@ namespace Tests.EditMode {
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
+        public static void Array () {
+            var empty = System.Array.Empty<int>();
+            var diff = new[] { 0, 1, 2, };
+            
+            TestNoGC(code:() => Array(source:empty));
+            TestNoGC(code:() => Array(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Array<TSource> (TSource[] source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            foreach (var test in enumerable) {
+                AssertAreEqual(expected:source[visited], actual:test);
+                ++visited;
+            }
+            AssertAreEqual(expected:source.Length, actual:visited);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
         public static void Cast () {
             var diff = new List<string>(collection:new[] { "0", "1", "2" });
 
@@ -539,6 +560,27 @@ namespace Tests.EditMode {
             var enumerable = source.AsEnumerable();
             var result = enumerable.LastOrDefault(predicate:predicate);
             AssertAreEqual(expected:expected, actual:result);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void List () {
+            var empty = new List<int>();
+            var diff = new List<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => List(source:empty));
+            TestNoGC(code:() => List(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void List<TSource> (List<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            foreach (var test in enumerable) {
+                AssertAreEqual(expected:source[index:visited], actual:test);
+                ++visited;
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
         }
 
         //--------------------------------------------------------------------------------------------------------------

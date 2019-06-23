@@ -28,7 +28,7 @@ namespace Relinq {
             )
         ;
         private TSource Current => 
-            m_index > 0 && m_index < m_array.Length ? m_array[m_index - 1] : throw new InvalidOperationException()
+            m_index > 0 && m_index <= m_array.Length ? m_array[m_index - 1] : throw new InvalidOperationException()
         ;
 
         //--------------------------------------------------------------------------------------------------------------
