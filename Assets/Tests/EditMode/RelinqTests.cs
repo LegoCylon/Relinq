@@ -646,10 +646,19 @@ namespace Tests.EditMode {
             result = firstAdapter.Mismatch(second:firstAdapter);
             AssertAreEqual(expected:default, actual:result);
 
+            result = firstAdapter.Mismatch(second:firstAdapter, comparer:EqualityComparer<TSource>.Default);
+            AssertAreEqual(expected:default, actual:result);
+
             result = secondAdapter.Mismatch(second:secondAdapter);
             AssertAreEqual(expected:default, actual:result);
 
+            result = secondAdapter.Mismatch(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
+            AssertAreEqual(expected:default, actual:result);
+
             result = firstAdapter.Mismatch(second:secondAdapter);
+            AssertAreEqual(expected:expected, actual:result);
+
+            result = firstAdapter.Mismatch(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:expected, actual:result);
         }
         
@@ -1055,10 +1064,19 @@ namespace Tests.EditMode {
             result = firstAdapter.SequenceEqual(second:firstAdapter);
             AssertAreEqual(expected:true, actual:result);
 
+            result = firstAdapter.SequenceEqual(second:firstAdapter, comparer:EqualityComparer<TSource>.Default);
+            AssertAreEqual(expected:true, actual:result);
+
             result = secondAdapter.SequenceEqual(second:secondAdapter);
             AssertAreEqual(expected:true, actual:result);
 
+            result = secondAdapter.SequenceEqual(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
+            AssertAreEqual(expected:true, actual:result);
+
             result = firstAdapter.SequenceEqual(second:secondAdapter);
+            AssertAreEqual(expected:expected, actual:result);
+
+            result = firstAdapter.SequenceEqual(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:expected, actual:result);
         }
         
