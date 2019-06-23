@@ -11,8 +11,6 @@
 
 namespace Relinq {
     
-    public interface IEnumeratorDescription<TEnumerator, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
-    { }
+    public interface IEnumeratorDescription<TSource> { }
     
 }

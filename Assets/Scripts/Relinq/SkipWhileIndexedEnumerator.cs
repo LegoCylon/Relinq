@@ -14,8 +14,8 @@ using System;
 namespace Relinq {
 
     public struct SkipWhileIndexedEnumerator<TEnumerator, TSource> :
-        IAdaptedEnumerator<SkipWhileIndexedEnumerator<TEnumerator, TSource>, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Types

@@ -14,9 +14,9 @@ using System;
 namespace Relinq {
 
     public struct ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource> : 
-        IAdaptedEnumerator<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource>
-        where TFirstEnumerator : IAdaptedEnumerator<TFirstEnumerator, TSource>
-        where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSource>
+        IAdaptedEnumerator<TSource>
+        where TFirstEnumerator : IAdaptedEnumerator<TSource>
+        where TSecondEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Types

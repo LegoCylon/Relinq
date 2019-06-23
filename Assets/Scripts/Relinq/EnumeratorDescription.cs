@@ -14,8 +14,8 @@ using System;
 namespace Relinq {
     
     public class EnumeratorDescription<TEnumerator, TSource> : 
-        IEnumeratorDescription<TEnumerator, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IEnumeratorDescription<TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Types

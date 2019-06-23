@@ -12,8 +12,8 @@
 namespace Relinq {
 
     public struct SkipEnumerator<TEnumerator, TSource> : 
-        IAdaptedEnumerator<SkipEnumerator<TEnumerator, TSource>, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

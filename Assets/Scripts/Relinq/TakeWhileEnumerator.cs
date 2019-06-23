@@ -14,8 +14,8 @@ using System;
 namespace Relinq {
 
     public struct TakeWhileEnumerator<TEnumerator, TSource> :
-        IAdaptedEnumerator<TakeWhileEnumerator<TEnumerator, TSource>, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Types

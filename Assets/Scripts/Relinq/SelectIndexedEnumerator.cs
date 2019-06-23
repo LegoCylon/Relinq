@@ -14,8 +14,8 @@ using System;
 namespace Relinq {
 
     public struct SelectIndexedEnumerator<TEnumerator, TSource, TResult> :
-        IAdaptedEnumerator<SelectIndexedEnumerator<TEnumerator, TSource, TResult>, TResult>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TResult>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

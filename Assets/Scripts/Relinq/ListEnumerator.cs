@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace Relinq {
 
-    public struct ListEnumerator<TSource> : IAdaptedEnumerator<ListEnumerator<TSource>, TSource> {
+    public struct ListEnumerator<TSource> : IAdaptedEnumerator<TSource> {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------

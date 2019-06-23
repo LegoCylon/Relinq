@@ -12,7 +12,7 @@
 namespace Relinq {
     
     public interface IEnumerableAdapter<TEnumerator, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     { } 
     
 }

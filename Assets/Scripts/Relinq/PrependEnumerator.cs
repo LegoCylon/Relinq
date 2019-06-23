@@ -12,8 +12,8 @@
 namespace Relinq {
 
     public struct PrependEnumerator<TEnumerator, TSource> : 
-        IAdaptedEnumerator<PrependEnumerator<TEnumerator, TSource>, TSource> 
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TSource> 
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

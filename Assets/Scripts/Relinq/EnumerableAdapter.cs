@@ -16,7 +16,7 @@ namespace Relinq {
 
     public readonly struct EnumerableAdapter<TEnumerator, TSource> : 
         IEnumerableAdapter<TEnumerator, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
@@ -101,7 +101,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>, TSource> 
             Concat<TSecondEnumerator> (in EnumerableAdapter<TSecondEnumerator, TSource> second)
-            where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSource>
+            where TSecondEnumerator : IAdaptedEnumerator<TSource>
             => 
             ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>.GetEnumerable(
                 first:m_enumerator, 
@@ -287,7 +287,7 @@ namespace Relinq {
 
         //--------------------------------------------------------------------------------------------------------------
         public int? Mismatch<TSecondEnumerator> (in EnumerableAdapter<TSecondEnumerator, TSource> second)
-            where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSource>
+            where TSecondEnumerator : IAdaptedEnumerator<TSource>
             => 
             Mismatch(second:second, comparer:null)
         ; 
@@ -297,7 +297,7 @@ namespace Relinq {
             in EnumerableAdapter<TSecondEnumerator, TSource> second,
             IEqualityComparer<TSource> comparer
         )
-            where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSource>
+            where TSecondEnumerator : IAdaptedEnumerator<TSource>
         {
             comparer = comparer ?? EqualityComparer<TSource>.Default;
 
@@ -373,7 +373,7 @@ namespace Relinq {
             SelectMany<TSourceEnumerator, TResult> (
                 Func<TSource, EnumerableAdapter<TSourceEnumerator, TResult>> selector
             )
-            where TSourceEnumerator : IAdaptedEnumerator<TSourceEnumerator, TResult>
+            where TSourceEnumerator : IAdaptedEnumerator<TResult>
             =>
             SelectManyEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>.GetEnumerable(
                 enumerator:m_enumerator, 
@@ -389,7 +389,7 @@ namespace Relinq {
             SelectMany<TSourceEnumerator, TResult> (
                 Func<TSource, int, EnumerableAdapter<TSourceEnumerator, TResult>> selector
             )
-            where TSourceEnumerator : IAdaptedEnumerator<TSourceEnumerator, TResult>
+            where TSourceEnumerator : IAdaptedEnumerator<TResult>
             =>
             SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>.GetEnumerable(
                 enumerator:m_enumerator, 
@@ -412,7 +412,7 @@ namespace Relinq {
                 Func<TSource, EnumerableAdapter<TSourceEnumerator, TIndirect>> collectionSelector,
                 Func<TSource, TIndirect, TResult> resultSelector
             )
-            where TSourceEnumerator : IAdaptedEnumerator<TSourceEnumerator, TIndirect>
+            where TSourceEnumerator : IAdaptedEnumerator<TIndirect>
             =>
             SelectManyIndirectEnumerator<
                 TEnumerator, 
@@ -446,7 +446,7 @@ namespace Relinq {
                 > collectionSelector,
                 Func<TSource, TIndirect, TResult> resultSelector
             )
-            where TSourceEnumerator : IAdaptedEnumerator<TSourceEnumerator, TIndirect>
+            where TSourceEnumerator : IAdaptedEnumerator<TIndirect>
             =>
             SelectManyIndirectIndexedEnumerator<
                 TEnumerator, 
@@ -463,7 +463,7 @@ namespace Relinq {
         
         //--------------------------------------------------------------------------------------------------------------
         public bool SequenceEqual<TSecondEnumerator> (in EnumerableAdapter<TSecondEnumerator, TSource> second)
-            where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSource>
+            where TSecondEnumerator : IAdaptedEnumerator<TSource>
             => 
             SequenceEqual(second:second, comparer:null)
         ; 
@@ -473,7 +473,7 @@ namespace Relinq {
             in EnumerableAdapter<TSecondEnumerator, TSource> second,
             IEqualityComparer<TSource> comparer
         )
-            where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSource>
+            where TSecondEnumerator : IAdaptedEnumerator<TSource>
         {
             comparer = comparer ?? EqualityComparer<TSource>.Default;
             using (var lhsEnumerator = GetEnumerator())
@@ -610,7 +610,7 @@ namespace Relinq {
                 in EnumerableAdapter<TSecondEnumerator, TSecondSource> second,
                 Func<TSource, TSecondSource, TResult> resultSelector
             )
-            where TSecondEnumerator : IAdaptedEnumerator<TSecondEnumerator, TSecondSource>
+            where TSecondEnumerator : IAdaptedEnumerator<TSecondSource>
             =>
             ZipEnumerator<TEnumerator, TSource, TSecondEnumerator, TSecondSource, TResult>.GetEnumerable(
                 first:m_enumerator, 
@@ -625,7 +625,7 @@ namespace Relinq {
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static int Count<TEnumerator, TSource> (this EnumerableAdapter<TEnumerator, TSource> enumerable)
-            where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+            where TEnumerator : IAdaptedEnumerator<TSource>
             =>
             enumerable.Count(predicate:(value) => true)
         ;
@@ -635,7 +635,7 @@ namespace Relinq {
             this EnumerableAdapter<TEnumerator, TSource> enumerable,
             Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+            where TEnumerator : IAdaptedEnumerator<TSource>
         {
             if (predicate == null) {
                 throw new ArgumentNullException(paramName:nameof(predicate));

@@ -13,7 +13,7 @@ using System;
 
 namespace Relinq {
 
-    public struct RepeatEnumerator<TSource> : IAdaptedEnumerator<RepeatEnumerator<TSource>, TSource> {
+    public struct RepeatEnumerator<TSource> : IAdaptedEnumerator<TSource> {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------

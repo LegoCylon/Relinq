@@ -14,8 +14,8 @@ using System;
 namespace Relinq {
 
     public struct DefaultIfEmptyEnumerator<TEnumerator, TSource> : 
-        IAdaptedEnumerator<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource>
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TSource>
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Types

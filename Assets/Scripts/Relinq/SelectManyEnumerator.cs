@@ -18,17 +18,9 @@ namespace Relinq {
         TSource, 
         TSourceEnumerator, 
         TResult
-    > : IAdaptedEnumerator<
-            SelectManyEnumerator<
-                TEnumerator, 
-                TSource, 
-                TSourceEnumerator, 
-                TResult
-            >,
-            TResult
-        >
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
-        where TSourceEnumerator : IAdaptedEnumerator<TSourceEnumerator, TResult>
+    > : IAdaptedEnumerator<TResult>
+        where TEnumerator : IAdaptedEnumerator<TSource>
+        where TSourceEnumerator : IAdaptedEnumerator<TResult>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

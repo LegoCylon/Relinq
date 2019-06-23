@@ -15,8 +15,8 @@ using System.Collections.Generic;
 namespace Relinq {
 
     public struct ReplaceEnumerator<TEnumerator, TSource> : 
-        IAdaptedEnumerator<ReplaceEnumerator<TEnumerator, TSource>, TSource> 
-        where TEnumerator : IAdaptedEnumerator<TEnumerator, TSource>
+        IAdaptedEnumerator<TSource> 
+        where TEnumerator : IAdaptedEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

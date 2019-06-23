@@ -11,6 +11,6 @@
 
 namespace Relinq {
 
-    public interface IAdaptedEnumerator<TEnumerator, TSource> { }
+    public interface IAdaptedEnumerator<TSource> { }
     
 }
