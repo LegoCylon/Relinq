@@ -12,8 +12,8 @@
 namespace Relinq {
 
     public struct OfTypeEnumerator<TEnumerator, TSource, TResult> :
-        IAdaptedEnumerator<TResult>
-        where TEnumerator : IAdaptedEnumerator<TSource>
+        IAdaptableEnumerator<TResult>
+        where TEnumerator : IAdaptableEnumerator<TSource>
         where TResult : class, TSource
     {
         //--------------------------------------------------------------------------------------------------------------

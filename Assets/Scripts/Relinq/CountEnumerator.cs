@@ -14,7 +14,7 @@ using System;
 namespace Relinq {
     
     public struct CountEnumerator<TSource> :
-        IAdaptedEnumerator<TSource>
+        IAdaptableEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

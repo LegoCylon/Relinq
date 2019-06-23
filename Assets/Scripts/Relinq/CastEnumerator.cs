@@ -14,8 +14,8 @@ using System;
 namespace Relinq {
 
     public struct CastEnumerator<TEnumerator, TSource, TResult> : 
-        IAdaptedEnumerator<TResult>
-        where TEnumerator : IAdaptedEnumerator<TSource>
+        IAdaptableEnumerator<TResult>
+        where TEnumerator : IAdaptableEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

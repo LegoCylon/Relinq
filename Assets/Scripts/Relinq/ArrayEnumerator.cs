@@ -14,7 +14,7 @@ using System;
 namespace Relinq {
 
     public struct ArrayEnumerator<TSource> :
-        IAdaptedEnumerator<TSource>
+        IAdaptableEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
@@ -40,9 +40,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ArrayEnumerator<TSource>, TSource> GetEnumerable (
-            TSource[] array
-        ) => 
+        public static EnumerableAdapter<ArrayEnumerator<TSource>, TSource> GetEnumerable (TSource[] array) => 
             new EnumerableAdapter<ArrayEnumerator<TSource>, TSource>(
                 enumerator:new EnumeratorAdapter<ArrayEnumerator<TSource>, TSource>(
                     description:Description,

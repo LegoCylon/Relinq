@@ -15,7 +15,7 @@ namespace Relinq {
 
     public interface IEnumeratorAdapter<TEnumerator, TSource> : 
         IDisposable
-        where TEnumerator : IAdaptedEnumerator<TSource>
+        where TEnumerator : IAdaptableEnumerator<TSource>
     { }
     
 }

@@ -22,7 +22,7 @@ namespace Relinq {
             this IList<TSource> list,
             EnumerableAdapter<TEnumerator, TSource> enumerable
         ) 
-            where TEnumerator : IAdaptedEnumerator<TSource>
+            where TEnumerator : IAdaptableEnumerator<TSource>
             => list.AddRange(enumerable:enumerable);
         
         //--------------------------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ namespace Relinq {
             this IList<TSource> list,
             EnumerableAdapter<TEnumerator, TSource> enumerable
         )
-            where TEnumerator : IAdaptedEnumerator<TSource>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             foreach (var element in enumerable) {
                 list.Add(item:element);

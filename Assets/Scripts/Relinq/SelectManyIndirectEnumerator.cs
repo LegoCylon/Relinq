@@ -19,9 +19,9 @@ namespace Relinq {
         TSourceEnumerator, 
         TIndirect,
         TResult
-    > : IAdaptedEnumerator<TResult>
-        where TEnumerator : IAdaptedEnumerator<TSource>
-        where TSourceEnumerator : IAdaptedEnumerator<TIndirect>
+    > : IAdaptableEnumerator<TResult>
+        where TEnumerator : IAdaptableEnumerator<TSource>
+        where TSourceEnumerator : IAdaptableEnumerator<TIndirect>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties

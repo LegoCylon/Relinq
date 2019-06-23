@@ -14,9 +14,9 @@ using System;
 namespace Relinq {
 
     public struct ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult> : 
-        IAdaptedEnumerator<TResult>
-        where TFirstEnumerator : IAdaptedEnumerator<TFirstSource>
-        where TSecondEnumerator : IAdaptedEnumerator<TSecondSource>
+        IAdaptableEnumerator<TResult>
+        where TFirstEnumerator : IAdaptableEnumerator<TFirstSource>
+        where TSecondEnumerator : IAdaptableEnumerator<TSecondSource>
     {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
