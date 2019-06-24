@@ -1,0 +1,13 @@
+{
+  "name": "com.legocylon.relinq",
+  "version": "0.0.0",
+  "displayName": "Relinq",
+  "description": "Relatively Efficient Linq",
+  "unity": "2019.1",
+  "unityRelease": "2f1",
+  "author": {
+    "name": "Andy Bond (LegoCylon)",
+    "email": "andybond@gmail.com",
+    "url": "https://github.com/LegoCylon/Relinq"
+  }
+}
