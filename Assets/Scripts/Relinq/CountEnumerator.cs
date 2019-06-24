@@ -19,15 +19,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<CountEnumerator<TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<CountEnumerator<TSource>, TSource>(
-                current:(ref CountEnumerator<TSource> enumerator) => enumerator.Current,
-                dispose:(ref CountEnumerator<TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref CountEnumerator<TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref CountEnumerator<TSource> enumerator) => enumerator.Reset()
-            )
-        ;
-        private TSource Current => 
+        public TSource Current => 
             m_index > 0 && m_index <= m_count ? 
                 m_generator(arg1:m_start, arg2:m_index - 1) : 
                 throw new InvalidOperationException()
@@ -50,10 +42,7 @@ namespace Relinq {
             Func<TSource, int, TSource> generator
         ) =>
             new EnumerableAdapter<CountEnumerator<TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<CountEnumerator<TSource>, TSource>(
-                    description:Description,
-                    enumerator:new CountEnumerator<TSource>(start:start, count:count, generator:generator)
-                )
+                enumerator:new CountEnumerator<TSource>(start:start, count:count, generator:generator)
             )
         ;
 
@@ -68,12 +57,12 @@ namespace Relinq {
             m_generator = generator ?? throw new ArgumentNullException(paramName:nameof(generator));
             m_index = 0;
         }
-
-        //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () { }
         
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public void Dispose () { }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public bool MoveNext () {
             if (m_index >= m_count) {
                 return false;
             }
@@ -83,7 +72,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () => m_index = 0;
+        public void Reset () => m_index = 0;
     }
     
 }

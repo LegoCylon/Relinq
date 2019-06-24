@@ -9,6 +9,8 @@
 //  See the License for the specific language governing permissions and limitations under the License.
 //======================================================================================================================
 
+using System;
+
 namespace Relinq {
 
     public struct TakeEnumerator<TEnumerator, TSource> :
@@ -18,20 +20,12 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<TakeEnumerator<TEnumerator, TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<TakeEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref TakeEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref TakeEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref TakeEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref TakeEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => m_enumerator.Current;
+        public TSource Current => m_enumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly int m_count;
         private int m_taken;
 
@@ -39,29 +33,26 @@ namespace Relinq {
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<TakeEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             int count
         ) =>
             new EnumerableAdapter<TakeEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<TakeEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new TakeEnumerator<TEnumerator, TSource>(enumerator:enumerator, count:count)
-                )
+                enumerator:new TakeEnumerator<TEnumerator, TSource>(enumerator:enumerator, count:count)
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
-        private TakeEnumerator (in EnumeratorAdapter<TEnumerator, TSource> enumerator, int count) {
+        private TakeEnumerator (in TEnumerator enumerator, int count) {
             m_enumerator = enumerator;
             m_count = count;
             m_taken = 0;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             if (m_taken >= m_count) {
                 return false;
             }
@@ -71,7 +62,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_taken = 0;
         }

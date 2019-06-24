@@ -9,6 +9,8 @@
 //  See the License for the specific language governing permissions and limitations under the License.
 //======================================================================================================================
 
+using System;
+
 namespace Relinq {
 
     public struct PrependEnumerator<TEnumerator, TSource> : 
@@ -18,50 +20,39 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<PrependEnumerator<TEnumerator, TSource>, TSource> Description { get; } =
-            new EnumeratorDescription<PrependEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref PrependEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref PrependEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref PrependEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref PrependEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => m_index > 1 ? m_enumerator.Current : m_element;
+        public TSource Current => m_index > 1 ? m_enumerator.Current : m_element;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
         private int m_index;
         private readonly TSource m_element;
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
             TSource element,
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator
+            in TEnumerator enumerator
         ) => 
             new EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<PrependEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new PrependEnumerator<TEnumerator, TSource>(element:element, enumerator:enumerator)
-                )
+                enumerator:new PrependEnumerator<TEnumerator, TSource>(element:element, enumerator:enumerator)
             )
         ; 
 
         //--------------------------------------------------------------------------------------------------------------
-        private PrependEnumerator (TSource element, in EnumeratorAdapter<TEnumerator, TSource> enumerator) {
+        private PrependEnumerator (TSource element, in TEnumerator enumerator) {
             m_index = 0;
             m_element = element;
             m_enumerator = enumerator;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             if (m_index > 0 && !m_enumerator.MoveNext()) {
                 return false;
             }
@@ -70,7 +61,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_index = 0;
         }

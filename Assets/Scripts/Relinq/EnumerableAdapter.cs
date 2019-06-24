@@ -21,12 +21,12 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private readonly EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private readonly TEnumerator m_enumerator;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public EnumerableAdapter (in EnumeratorAdapter<TEnumerator, TSource> enumerator) {
+        public EnumerableAdapter (in TEnumerator enumerator) {
             m_enumerator = enumerator;
         }
 
@@ -183,7 +183,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        public EnumeratorAdapter<TEnumerator, TSource> GetEnumerator () => m_enumerator;
+        public TEnumerator GetEnumerator () => m_enumerator;
 
         //--------------------------------------------------------------------------------------------------------------
         public TSource Last () => Last(predicate:(value) => true);

@@ -1457,6 +1457,35 @@ namespace Tests.EditMode {
             }
             AssertAreEqual(expected:Math.Min(val1:first.Count, val2:second.Count), actual:visited);
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private interface IExperiment<out TSource> : IDisposable {
+            TSource Current { get; }
+            bool MoveNext ();
+            void Reset ();
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private struct Experiment<TSource> : IExperiment<TSource> {
+            TSource IExperiment<TSource>.Current => default;
+            public void Dispose () { }
+            bool IExperiment<TSource>.MoveNext () => false;
+            void IExperiment<TSource>.Reset () { }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void ExperimentTest () {
+            TestNoGC(code:() => ExperimentTest<Experiment<int>, int>(experiment:new Experiment<int>()));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void ExperimentTest<TExperiment, TSource> (TExperiment experiment)
+            where TExperiment : IExperiment<TSource> {
+            using (experiment) {
+                while (experiment.MoveNext()) { }
+            }
+        }
     }
     
 }

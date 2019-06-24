@@ -31,20 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource> 
-            Description { get;} = 
-            new EnumeratorDescription<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource>(
-                current:(ref ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource> enumerator) => 
-                    enumerator.Current,
-                dispose:(ref ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource> enumerator) => 
-                    enumerator.Dispose(),
-                moveNext:(ref ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource> enumerator) => 
-                    enumerator.MoveNext(),
-                reset:(ref ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource> enumerator) => 
-                    enumerator.Reset() 
-            )
-        ;
-        private TSource Current {
+        public TSource Current {
             get {
                 switch (m_state) {
                     case State.UsingFirst:
@@ -62,8 +49,8 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TFirstEnumerator, TSource> m_first;
-        private EnumeratorAdapter<TSecondEnumerator, TSource> m_second;
+        private TFirstEnumerator m_first;
+        private TSecondEnumerator m_second;
         private State m_state;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -71,41 +58,34 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource>
             GetEnumerable (
-                in EnumeratorAdapter<TFirstEnumerator, TSource> first,
-                in EnumeratorAdapter<TSecondEnumerator, TSource> second
+                in TFirstEnumerator first,
+                in TSecondEnumerator second
             ) =>
             new EnumerableAdapter<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<
-                    ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, 
-                    TSource
-                >(
-                    description:Description,
-                    enumerator:new ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>(
-                        first:first,
-                        second:second
-                    )
+                enumerator:new ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>(
+                    first:first,
+                    second:second
                 )
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private ConcatEnumerable (
-            in EnumeratorAdapter<TFirstEnumerator, TSource> first, 
-            in EnumeratorAdapter<TSecondEnumerator, TSource> second
+            in TFirstEnumerator first, 
+            in TSecondEnumerator second
         ) {
             m_first = first;
             m_second = second;
             m_state = State.Default;
         }
-        
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () {
+        public void Dispose () {
             m_first.Dispose();
             m_second.Dispose();
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             for (;;) {
                 switch (m_state) {
                     case State.Default:
@@ -132,7 +112,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_first.Reset();
             m_second.Reset();
             m_state = State.Default;

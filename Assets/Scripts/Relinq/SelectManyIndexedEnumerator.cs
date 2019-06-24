@@ -25,43 +25,19 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<
-            SelectManyIndexedEnumerator<
-                TEnumerator, 
-                TSource, 
-                TSourceEnumerator, 
-                TResult
-            >,
-            TResult
-        >
-            Description { get; } = 
-            new EnumeratorDescription<
-                SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>, 
-                TResult
-            >(
-                current:(ref SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult> enumerator) 
-                    => enumerator.Current,
-                dispose:(ref SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult> enumerator)
-                    => enumerator.Dispose(),
-                moveNext:(ref SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult> enumerator)
-                    => enumerator.MoveNext(),
-                reset:(ref SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult> enumerator)
-                    => enumerator.Reset() 
-            )
-        ;
-        private TResult Current => m_resultEnumerator.Current;
+        public TResult Current => m_resultEnumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly Func<
             TSource, 
             int, 
             EnumerableAdapter<TSourceEnumerator, TResult>
         > m_selector;
         private bool m_hasEnumerator;
-        private EnumeratorAdapter<TSourceEnumerator, TResult> m_resultEnumerator;
+        private TSourceEnumerator m_resultEnumerator;
         private int m_sourceIndex;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -72,29 +48,23 @@ namespace Relinq {
             TResult
         >
             GetEnumerable (
-                in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+                in TEnumerator enumerator,
                 Func<TSource, int, EnumerableAdapter<TSourceEnumerator, TResult>> selector
             ) =>
             new EnumerableAdapter<
                 SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>, 
                 TResult
             >(
-                enumerator:new EnumeratorAdapter<
-                    SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>, 
-                    TResult
-                >(
-                    description:Description,
-                    enumerator:new SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>(
-                        enumerator:enumerator, 
-                        selector:selector
-                    )
+                enumerator:new SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>(
+                    enumerator:enumerator, 
+                    selector:selector
                 )
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private SelectManyIndexedEnumerator (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator, 
+            in TEnumerator enumerator, 
             Func<TSource, int, EnumerableAdapter<TSourceEnumerator, TResult>> selector
         ) {
             m_enumerator = enumerator;
@@ -103,12 +73,12 @@ namespace Relinq {
             m_resultEnumerator = default;
             m_sourceIndex = 0;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             for (;;) {
                 if (m_hasEnumerator && m_resultEnumerator.MoveNext()) {
                     return true;
@@ -124,7 +94,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_hasEnumerator = false;
             m_resultEnumerator = default;

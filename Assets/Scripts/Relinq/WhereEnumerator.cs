@@ -20,53 +20,39 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<WhereEnumerator<TEnumerator, TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<WhereEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref WhereEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref WhereEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref WhereEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref WhereEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => m_enumerator.Current;
+        public TSource Current => m_enumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly Func<TSource, bool> m_predicate;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             Func<TSource, bool> predicate
         ) =>
             new EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<WhereEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new WhereEnumerator<TEnumerator, TSource>(enumerator:enumerator, predicate:predicate)
-                )
+                enumerator:new WhereEnumerator<TEnumerator, TSource>(enumerator:enumerator, predicate:predicate)
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
-        private WhereEnumerator (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator, 
-            Func<TSource, bool> predicate
-        ) {
+        private WhereEnumerator (in TEnumerator enumerator, Func<TSource, bool> predicate) {
             m_enumerator = enumerator;
             m_predicate = predicate ?? throw new ArgumentNullException(paramName:nameof(predicate));
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             while (m_enumerator.MoveNext()) {
-                if (m_predicate(arg:Current)) {
+                if (m_predicate(arg:m_enumerator.Current)) {
                     return true;
                 }
             }
@@ -74,7 +60,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () => m_enumerator.Reset();
+        public void Reset () => m_enumerator.Reset();
     }
     
 }

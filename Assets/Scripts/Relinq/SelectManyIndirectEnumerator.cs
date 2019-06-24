@@ -26,72 +26,21 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<
-            SelectManyIndirectEnumerator<
-                TEnumerator, 
-                TSource, 
-                TSourceEnumerator, 
-                TIndirect,
-                TResult
-            >,
-            TResult
-        >
-            Description { get; } = 
-            new EnumeratorDescription<
-                SelectManyIndirectEnumerator<TEnumerator, TSource, TSourceEnumerator, TIndirect, TResult>, 
-                TResult
-            >(
-                current:(
-                    ref SelectManyIndirectEnumerator<
-                        TEnumerator, 
-                        TSource, 
-                        TSourceEnumerator, 
-                        TIndirect, 
-                        TResult
-                    > enumerator
-                ) => enumerator.Current,
-                dispose:(
-                    ref SelectManyIndirectEnumerator<
-                        TEnumerator, 
-                        TSource, 
-                        TSourceEnumerator, 
-                        TIndirect, 
-                        TResult
-                    > enumerator
-                ) => enumerator.Dispose(),
-                moveNext:(
-                    ref SelectManyIndirectEnumerator<
-                        TEnumerator, 
-                        TSource, 
-                        TSourceEnumerator, 
-                        TIndirect, 
-                        TResult
-                    > enumerator
-                ) => enumerator.MoveNext(),
-                reset:(
-                    ref SelectManyIndirectEnumerator<
-                        TEnumerator, 
-                        TSource, 
-                        TSourceEnumerator, 
-                        TIndirect, 
-                        TResult
-                    > enumerator
-                ) => enumerator.Reset() 
-            )
+        public TResult Current => 
+            m_resultSelector(arg1:m_enumerator.Current, arg2:m_collectionEnumerator.Current)
         ;
-        private TResult Current => m_resultSelector(arg1:m_enumerator.Current, arg2:m_collectionEnumerator.Current);
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly Func<
             TSource, 
             EnumerableAdapter<TSourceEnumerator, TIndirect>
         > m_collectionSelector;
         private readonly Func<TSource, TIndirect, TResult> m_resultSelector;
         private bool m_hasEnumerator;
-        private EnumeratorAdapter<TSourceEnumerator, TIndirect> m_collectionEnumerator;
+        private TSourceEnumerator m_collectionEnumerator;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
@@ -107,7 +56,7 @@ namespace Relinq {
             TResult
         >
             GetEnumerable (
-                in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+                in TEnumerator enumerator,
                 Func<TSource, EnumerableAdapter<TSourceEnumerator, TIndirect>> collectionSelector,
                 Func<TSource, TIndirect, TResult> resultSelector
             ) =>
@@ -121,35 +70,19 @@ namespace Relinq {
                 >,
                 TResult
             >(
-                enumerator:new EnumeratorAdapter<
-                    SelectManyIndirectEnumerator<
-                        TEnumerator, 
-                        TSource, 
-                        TSourceEnumerator, 
-                        TIndirect, 
-                        TResult
-                    >,
+                enumerator:new SelectManyIndirectEnumerator<
+                    TEnumerator, 
+                    TSource, 
+                    TSourceEnumerator, 
+                    TIndirect, 
                     TResult
-                >(
-                    description:Description,
-                    enumerator:new SelectManyIndirectEnumerator<
-                        TEnumerator, 
-                        TSource, 
-                        TSourceEnumerator, 
-                        TIndirect, 
-                        TResult
-                    >(
-                        enumerator:enumerator, 
-                        collectionSelector:collectionSelector,
-                        resultSelector:resultSelector
-                    )
-                )
+                >(enumerator:enumerator, collectionSelector:collectionSelector, resultSelector:resultSelector)
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private SelectManyIndirectEnumerator (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             Func<TSource, EnumerableAdapter<TSourceEnumerator, TIndirect>> collectionSelector,
             Func<TSource, TIndirect, TResult> resultSelector
         ) {
@@ -161,12 +94,12 @@ namespace Relinq {
             m_hasEnumerator = false;
             m_collectionEnumerator = default;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             for (;;) {
                 if (m_hasEnumerator && m_collectionEnumerator.MoveNext()) {
                     return true;
@@ -182,7 +115,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_hasEnumerator = false;
             m_collectionEnumerator = default;

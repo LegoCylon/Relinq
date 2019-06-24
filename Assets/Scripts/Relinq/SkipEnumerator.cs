@@ -9,6 +9,8 @@
 //  See the License for the specific language governing permissions and limitations under the License.
 //======================================================================================================================
 
+using System;
+
 namespace Relinq {
 
     public struct SkipEnumerator<TEnumerator, TSource> : 
@@ -18,59 +20,48 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<SkipEnumerator<TEnumerator, TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<SkipEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref SkipEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref SkipEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref SkipEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref SkipEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => m_enumerator.Current;
+        public TSource Current => m_enumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly int m_count;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<SkipEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             int count
         ) =>
             new EnumerableAdapter<SkipEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<SkipEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new SkipEnumerator<TEnumerator, TSource>(enumerator:enumerator, count:count)
-                )
+                enumerator:new SkipEnumerator<TEnumerator, TSource>(enumerator:enumerator, count:count)
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
-        private SkipEnumerator (in EnumeratorAdapter<TEnumerator, TSource> enumerator, int count) {
+        private SkipEnumerator (in TEnumerator enumerator, int count) {
             m_enumerator = enumerator;
             m_count = count;
-            Setup();
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () => m_enumerator.MoveNext();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
-            m_enumerator.Reset();
             Setup();
         }
         
         //--------------------------------------------------------------------------------------------------------------
         private void Setup () {
             for (var i = 0; i < m_count && m_enumerator.MoveNext(); ++i) { }
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
+
+        //--------------------------------------------------------------------------------------------------------------
+        public bool MoveNext () => m_enumerator.MoveNext();
+
+        //--------------------------------------------------------------------------------------------------------------
+        public void Reset () {
+            m_enumerator.Reset();
+            Setup();
         }
     }
     

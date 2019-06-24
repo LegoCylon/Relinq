@@ -21,15 +21,8 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<ReplaceEnumerator<TEnumerator, TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<ReplaceEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref ReplaceEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref ReplaceEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref ReplaceEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref ReplaceEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => m_equalityComparer.Equals(x:m_enumerator.Current, y:m_replaceWhat) ? 
+        public TSource Current => 
+            m_equalityComparer.Equals(x:m_enumerator.Current, y:m_replaceWhat) ? 
             m_replaceWith : 
             m_enumerator.Current
         ;
@@ -37,7 +30,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly TSource m_replaceWhat;
         private readonly TSource m_replaceWith;
         private readonly IEqualityComparer<TSource> m_equalityComparer;
@@ -46,27 +39,24 @@ namespace Relinq {
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator, 
+            in TEnumerator enumerator, 
             TSource what, 
             TSource with, 
             IEqualityComparer<TSource> equalityComparer
         ) =>
             new EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new ReplaceEnumerator<TEnumerator, TSource>(
-                        enumerator:enumerator, 
-                        replaceWhat:what, 
-                        replaceWith:with, 
-                        equalityComparer:equalityComparer
-                    )
+                enumerator:new ReplaceEnumerator<TEnumerator, TSource>(
+                    enumerator:enumerator, 
+                    replaceWhat:what, 
+                    replaceWith:with, 
+                    equalityComparer:equalityComparer
                 )
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private ReplaceEnumerator (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             TSource replaceWhat,
             TSource replaceWith,
             IEqualityComparer<TSource> equalityComparer
@@ -78,15 +68,15 @@ namespace Relinq {
                 equalityComparer ?? throw new ArgumentNullException(paramName:nameof(equalityComparer))
             ;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
+        public bool MoveNext () => m_enumerator.MoveNext();
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () => m_enumerator.MoveNext();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private void Reset () => m_enumerator.Reset();
+        public void Reset () => m_enumerator.Reset();
     }
     
 }

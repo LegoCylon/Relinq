@@ -30,15 +30,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<SkipWhileEnumerator<TEnumerator, TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<SkipWhileEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref SkipWhileEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref SkipWhileEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref SkipWhileEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref SkipWhileEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current {
+        public TSource Current {
             get {
                 switch (m_state) {
                     case State.Enumerating:
@@ -55,7 +47,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly Func<TSource, bool> m_predicate;
         private State m_state;
 
@@ -63,35 +55,32 @@ namespace Relinq {
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             Func<TSource, bool> predicate
         ) =>
             new EnumerableAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new SkipWhileEnumerator<TEnumerator, TSource>(
-                        enumerator:enumerator, 
-                        predicate:predicate
-                    )
+                enumerator:new SkipWhileEnumerator<TEnumerator, TSource>(
+                    enumerator:enumerator, 
+                    predicate:predicate
                 )
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private SkipWhileEnumerator (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator, 
+            in TEnumerator enumerator, 
             Func<TSource, bool> predicate
         ) {
             m_enumerator = enumerator;
             m_predicate = predicate;
             m_state = State.Default;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             for (;;) {
                 switch (m_state) {
                     case State.Default:
@@ -123,7 +112,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_state = State.Default;
         }

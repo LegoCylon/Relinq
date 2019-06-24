@@ -30,15 +30,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<AppendEnumerator<TEnumerator, TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<AppendEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref AppendEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref AppendEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref AppendEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref AppendEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current {
+        public TSource Current {
             get {
                 switch (m_state) {
                     case State.UsingEnumerator:
@@ -56,36 +48,34 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly TSource m_element;
         private State m_state;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
+        //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<AppendEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator, 
+            in TEnumerator enumerator, 
             TSource element
         ) => 
             new EnumerableAdapter<AppendEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<AppendEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new AppendEnumerator<TEnumerator, TSource>(enumerator:enumerator, element:element)
-                )
+                enumerator:new AppendEnumerator<TEnumerator, TSource>(enumerator:enumerator, element:element)
             )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
-        private AppendEnumerator (in EnumeratorAdapter<TEnumerator, TSource> enumerator, TSource element) {
+        private AppendEnumerator (in TEnumerator enumerator, TSource element) {
             m_enumerator = enumerator;
             m_element = element;
             m_state = State.Default;
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             switch (m_state) {
                 case State.Default:
                 case State.UsingEnumerator:
@@ -106,7 +96,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_state = State.Default;
         }

@@ -23,69 +23,69 @@ namespace Relinq {
         private enum State {
             Default,
             Enumerating,
+            Fallback,
             Finished,
         }
         
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource> 
-            Description { get; } =
-            new EnumeratorDescription<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref DefaultIfEmptyEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref DefaultIfEmptyEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref DefaultIfEmptyEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref DefaultIfEmptyEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current { get; set; }
+        public TSource Current {
+            get {
+                switch (m_state) {
+                    case State.Enumerating:
+                        return m_enumerator.Current;
+                    case State.Fallback:
+                        return default;
+                    default:
+                        throw new InvalidOperationException();
+                }
+            }
+        }
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private State m_state;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator
+            in TEnumerator enumerator
         ) =>
             new EnumerableAdapter<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new DefaultIfEmptyEnumerator<TEnumerator, TSource>(enumerator:enumerator)
-                )
+                enumerator:new DefaultIfEmptyEnumerator<TEnumerator, TSource>(enumerator:enumerator)
             )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
-        private DefaultIfEmptyEnumerator (in EnumeratorAdapter<TEnumerator, TSource> enumerator) {
+        private DefaultIfEmptyEnumerator (in TEnumerator enumerator) {
             m_enumerator = enumerator;
             m_state = State.Default;
-            Current = default;
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             switch (m_state) {
                 case State.Default:
                     if (m_enumerator.MoveNext()) {
-                        Current = m_enumerator.Current;
                         m_state = State.Enumerating;
                         return true;
                     }
-                    m_state = State.Finished;
+                    m_state = State.Fallback;
                     return true;
                 case State.Enumerating:
                     if (m_enumerator.MoveNext()) {
-                        Current = m_enumerator.Current;
                         return true;
                     }
+                    m_state = State.Finished;
+                    return false;
+                case State.Fallback:
                     m_state = State.Finished;
                     return false;
                 case State.Finished:
@@ -96,8 +96,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
-            Current = default;
+        public void Reset () {
             m_state = State.Default;
         }
     }

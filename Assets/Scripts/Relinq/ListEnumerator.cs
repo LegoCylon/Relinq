@@ -18,15 +18,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<ListEnumerator<TSource>, TSource> Description { get; } = 
-            new EnumeratorDescription<ListEnumerator<TSource>, TSource>(
-                current:(ref ListEnumerator<TSource> enumerator) => enumerator.Current,
-                dispose:(ref ListEnumerator<TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref ListEnumerator<TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref ListEnumerator<TSource> enumerator) => enumerator.Reset()
-            )
-        ;
-        private TSource Current => m_enumerator.Current;
+        public TSource Current => m_enumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
@@ -39,10 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<ListEnumerator<TSource>, TSource> GetEnumerable (List<TSource> list) =>
             new EnumerableAdapter<ListEnumerator<TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<ListEnumerator<TSource>, TSource>(
-                    description:Description,
-                    enumerator:new ListEnumerator<TSource>(list:list)
-                )
+                enumerator:new ListEnumerator<TSource>(list:list)
             )
         ;
         
@@ -51,15 +40,15 @@ namespace Relinq {
             m_list = list ?? throw new ArgumentNullException(paramName:nameof(list));
             m_enumerator = list.GetEnumerator();
         }
-
-        //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () => m_enumerator.MoveNext();
         
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () => m_enumerator = m_list.GetEnumerator();
+        public void Dispose () => m_enumerator.Dispose();
+
+        //--------------------------------------------------------------------------------------------------------------
+        public bool MoveNext () => m_enumerator.MoveNext();
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Reset () => m_enumerator = m_list.GetEnumerator();
     }
     
 }

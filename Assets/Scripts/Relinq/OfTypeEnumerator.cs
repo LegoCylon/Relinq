@@ -9,6 +9,8 @@
 //  See the License for the specific language governing permissions and limitations under the License.
 //======================================================================================================================
 
+using System;
+
 namespace Relinq {
 
     public struct OfTypeEnumerator<TEnumerator, TSource, TResult> :
@@ -19,45 +21,34 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult> 
-            Description { get; } = new EnumeratorDescription<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult>(
-                current:(ref OfTypeEnumerator<TEnumerator, TSource, TResult> enumerator) => enumerator.Current,
-                dispose:(ref OfTypeEnumerator<TEnumerator, TSource, TResult> enumerator) => enumerator.Dispose(),
-                moveNext:(ref OfTypeEnumerator<TEnumerator, TSource, TResult> enumerator) => enumerator.MoveNext(),
-                reset:(ref OfTypeEnumerator<TEnumerator, TSource, TResult> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TResult Current => m_enumerator.Current as TResult;
+        public TResult Current => m_enumerator.Current as TResult;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator
+            in TEnumerator enumerator
         ) => 
             new EnumerableAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult>(
-                enumerator:new EnumeratorAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult>(
-                    description:Description,
-                    enumerator:new OfTypeEnumerator<TEnumerator, TSource, TResult>(enumerator:enumerator)
-                )
+                enumerator:new OfTypeEnumerator<TEnumerator, TSource, TResult>(enumerator:enumerator)
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
-        private OfTypeEnumerator (in EnumeratorAdapter<TEnumerator, TSource> enumerator) {
+        private OfTypeEnumerator (in TEnumerator enumerator) {
             m_enumerator = enumerator;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             while (m_enumerator.MoveNext()) {
                 if (m_enumerator.Current is TResult) {
                     return true;
@@ -67,7 +58,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () => m_enumerator.Reset();
+        public void Reset () => m_enumerator.Reset();
     }
     
 }

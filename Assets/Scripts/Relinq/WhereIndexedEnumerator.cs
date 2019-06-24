@@ -20,21 +20,12 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<WhereIndexedEnumerator<TEnumerator, TSource>, TSource> 
-            Description { get; } = 
-            new EnumeratorDescription<WhereIndexedEnumerator<TEnumerator, TSource>, TSource>(
-                current:(ref WhereIndexedEnumerator<TEnumerator, TSource> enumerator) => enumerator.Current,
-                dispose:(ref WhereIndexedEnumerator<TEnumerator, TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref WhereIndexedEnumerator<TEnumerator, TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref WhereIndexedEnumerator<TEnumerator, TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => m_enumerator.Current;
+        public TSource Current => m_enumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TEnumerator, TSource> m_enumerator;
+        private TEnumerator m_enumerator;
         private readonly Func<TSource, int, bool> m_predicate;
         private int m_visited;
 
@@ -42,37 +33,31 @@ namespace Relinq {
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<WhereIndexedEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator,
+            in TEnumerator enumerator,
             Func<TSource, int, bool> predicate
         ) =>
             new EnumerableAdapter<WhereIndexedEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<WhereIndexedEnumerator<TEnumerator, TSource>, TSource>(
-                    description:Description,
-                    enumerator:new WhereIndexedEnumerator<TEnumerator, TSource>(
-                        enumerator:enumerator, 
-                        predicate:predicate
-                    ) 
-                )
+                enumerator:new WhereIndexedEnumerator<TEnumerator, TSource>(enumerator:enumerator, predicate:predicate) 
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private WhereIndexedEnumerator (
-            in EnumeratorAdapter<TEnumerator, TSource> enumerator, 
+            in TEnumerator enumerator, 
             Func<TSource, int, bool> predicate
         ) {
             m_enumerator = enumerator;
             m_predicate = predicate ?? throw new ArgumentNullException(paramName:nameof(predicate));
             m_visited = 0;
         }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        public void Dispose () => m_enumerator.Dispose();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () => m_enumerator.Dispose();
-
-        //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             while (m_enumerator.MoveNext()) {
-                if (m_predicate(arg1:Current, arg2:m_visited++)) {
+                if (m_predicate(arg1:m_enumerator.Current, arg2:m_visited++)) {
                     return true;
                 }
             }
@@ -80,7 +65,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_enumerator.Reset();
             m_visited = 0;
         }

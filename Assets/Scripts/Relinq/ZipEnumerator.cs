@@ -21,60 +21,13 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<
-            ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult>, 
-            TResult
-        >
-            Description { get; } = 
-            new EnumeratorDescription<
-                ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult>, 
-                TResult
-            >(
-                current:(
-                    ref ZipEnumerator<
-                        TFirstEnumerator, 
-                        TFirstSource, 
-                        TSecondEnumerator, 
-                        TSecondSource, 
-                        TResult
-                    > enumerator
-                ) => enumerator.Current,
-                dispose:(
-                    ref ZipEnumerator<
-                        TFirstEnumerator, 
-                        TFirstSource, 
-                        TSecondEnumerator, 
-                        TSecondSource, 
-                        TResult
-                    > enumerator
-                ) => enumerator.Dispose(),
-                moveNext:(
-                    ref ZipEnumerator<
-                        TFirstEnumerator, 
-                        TFirstSource, 
-                        TSecondEnumerator, 
-                        TSecondSource, 
-                        TResult
-                    > enumerator
-                ) => enumerator.MoveNext(),
-                reset:(
-                    ref ZipEnumerator<
-                        TFirstEnumerator, 
-                        TFirstSource, 
-                        TSecondEnumerator, 
-                        TSecondSource, 
-                        TResult
-                    > enumerator
-                ) => enumerator.Reset()
-            )
-        ;
-        private TResult Current => m_resultSelector(arg1:m_first.Current, arg2:m_second.Current);
+        public TResult Current => m_resultSelector(arg1:m_first.Current, arg2:m_second.Current);
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private EnumeratorAdapter<TFirstEnumerator, TFirstSource> m_first;
-        private EnumeratorAdapter<TSecondEnumerator, TSecondSource> m_second;
+        private TFirstEnumerator m_first;
+        private TSecondEnumerator m_second;
         private readonly Func<TFirstSource, TSecondSource, TResult> m_resultSelector;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -85,56 +38,46 @@ namespace Relinq {
             TResult
         >
             GetEnumerable (
-                in EnumeratorAdapter<TFirstEnumerator, TFirstSource> first,
-                in EnumeratorAdapter<TSecondEnumerator, TSecondSource> second,
+                in TFirstEnumerator first,
+                in TSecondEnumerator second,
                 Func<TFirstSource, TSecondSource, TResult> resultSelector
             ) =>
             new EnumerableAdapter<
                 ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult>, 
                 TResult
             >(
-                enumerator:new EnumeratorAdapter<
-                    ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult>, 
+                enumerator:new ZipEnumerator<
+                    TFirstEnumerator, 
+                    TFirstSource, 
+                    TSecondEnumerator, 
+                    TSecondSource, 
                     TResult
-                >(
-                    description:Description,
-                    enumerator:new ZipEnumerator<
-                        TFirstEnumerator, 
-                        TFirstSource, 
-                        TSecondEnumerator, 
-                        TSecondSource, 
-                        TResult
-                    >(
-                        first:first, 
-                        second:second, 
-                        resultSelector:resultSelector
-                    )
-                )
+                >(first:first, second:second, resultSelector:resultSelector)
             )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
         private ZipEnumerator (
-            in EnumeratorAdapter<TFirstEnumerator, TFirstSource> first, 
-            in EnumeratorAdapter<TSecondEnumerator, TSecondSource> second, 
+            in TFirstEnumerator first, 
+            in TSecondEnumerator second, 
             Func<TFirstSource, TSecondSource, TResult> resultSelector
         ) {
             m_first = first;
             m_second = second;
             m_resultSelector = resultSelector ?? throw new ArgumentNullException(paramName:nameof(resultSelector));
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () {
+        public void Dispose () {
             m_first.Dispose();
             m_second.Dispose();
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () => m_first.MoveNext() && m_second.MoveNext();
+        public bool MoveNext () => m_first.MoveNext() && m_second.MoveNext();
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () {
+        public void Reset () {
             m_first.Reset();
             m_second.Reset();
         }

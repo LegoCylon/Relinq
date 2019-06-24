@@ -19,15 +19,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        private static EnumeratorDescription<ArrayEnumerator<TSource>, TSource> Description { get; } =  
-            new EnumeratorDescription<ArrayEnumerator<TSource>, TSource>(
-                current:(ref ArrayEnumerator<TSource> enumerator) => enumerator.Current,
-                dispose:(ref ArrayEnumerator<TSource> enumerator) => enumerator.Dispose(),
-                moveNext:(ref ArrayEnumerator<TSource> enumerator) => enumerator.MoveNext(),
-                reset:(ref ArrayEnumerator<TSource> enumerator) => enumerator.Reset() 
-            )
-        ;
-        private TSource Current => 
+        public TSource Current => 
             m_index > 0 && m_index <= m_array.Length ? m_array[m_index - 1] : throw new InvalidOperationException()
         ;
 
@@ -42,10 +34,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<ArrayEnumerator<TSource>, TSource> GetEnumerable (TSource[] array) => 
             new EnumerableAdapter<ArrayEnumerator<TSource>, TSource>(
-                enumerator:new EnumeratorAdapter<ArrayEnumerator<TSource>, TSource>(
-                    description:Description,
-                    enumerator:new ArrayEnumerator<TSource>(array:array)
-                )
+                enumerator:new ArrayEnumerator<TSource>(array:array)
             )
         ;
         
@@ -56,10 +45,10 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private void Dispose () { }
+        public void Dispose () { }
 
         //--------------------------------------------------------------------------------------------------------------
-        private bool MoveNext () {
+        public bool MoveNext () {
             if (m_index >= m_array.Length) {
                 return false;
             }
@@ -69,7 +58,7 @@ namespace Relinq {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private void Reset () => m_index = 0;
+        public void Reset () => m_index = 0;
     }
     
 }
