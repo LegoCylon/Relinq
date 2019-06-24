@@ -29,14 +29,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ListEnumerator<TSource>, TSource> GetEnumerable (List<TSource> list) =>
-            new EnumerableAdapter<ListEnumerator<TSource>, TSource>(
-                enumerator:new ListEnumerator<TSource>(list:list)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private ListEnumerator (List<TSource> list) {
+        public ListEnumerator (List<TSource> list) {
             m_list = list ?? throw new ArgumentNullException(paramName:nameof(list));
             m_enumerator = list.GetEnumerator();
         }

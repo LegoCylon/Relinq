@@ -32,17 +32,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<TakeEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator,
-            int count
-        ) =>
-            new EnumerableAdapter<TakeEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new TakeEnumerator<TEnumerator, TSource>(enumerator:enumerator, count:count)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private TakeEnumerator (in TEnumerator enumerator, int count) {
+        public TakeEnumerator (in TEnumerator enumerator, int count) {
             m_enumerator = enumerator;
             m_count = count;
             m_taken = 0;

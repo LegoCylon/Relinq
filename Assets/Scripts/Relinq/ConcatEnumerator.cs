@@ -56,24 +56,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource>
-            GetEnumerable (
-                in TFirstEnumerator first,
-                in TSecondEnumerator second
-            ) =>
-            new EnumerableAdapter<ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>, TSource>(
-                enumerator:new ConcatEnumerable<TFirstEnumerator, TSecondEnumerator, TSource>(
-                    first:first,
-                    second:second
-                )
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private ConcatEnumerable (
-            in TFirstEnumerator first, 
-            in TSecondEnumerator second
-        ) {
+        public ConcatEnumerable (in TFirstEnumerator first, in TSecondEnumerator second) {
             m_first = first;
             m_second = second;
             m_state = State.Default;

@@ -31,23 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<SelectEnumerator<TEnumerator, TSource, TResult>, TResult> GetEnumerable (
-            in TEnumerator enumerator,
-            Func<TSource, TResult> selector
-        ) =>
-            new EnumerableAdapter<SelectEnumerator<TEnumerator, TSource, TResult>, TResult>(
-                enumerator:new SelectEnumerator<TEnumerator, TSource, TResult>(
-                    enumerator:enumerator, 
-                    selector:selector
-                )
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private SelectEnumerator (
-            in TEnumerator enumerator, 
-            Func<TSource, TResult> selector
-        ) {
+        public SelectEnumerator (in TEnumerator enumerator, Func<TSource, TResult> selector) {
             m_enumerator = enumerator;
             m_selector = selector ?? throw new ArgumentNullException(paramName:nameof(selector));
         }

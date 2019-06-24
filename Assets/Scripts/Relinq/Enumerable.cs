@@ -37,7 +37,12 @@ namespace Relinq {
         public static EnumerableAdapter<RepeatEnumerator<TSource>, TSource> Repeat<TSource> (
             TSource element, 
             int count
-        ) => RepeatEnumerator<TSource>.GetEnumerable(element:element, count:count);
+        ) => 
+            new EnumerableAdapter<RepeatEnumerator<TSource>, TSource>(
+                enumerator:new RepeatEnumerator<TSource>(element:element, count:count)
+            )
+        ;
+
     }
     
 }

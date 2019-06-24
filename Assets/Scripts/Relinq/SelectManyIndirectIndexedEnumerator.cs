@@ -47,57 +47,9 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<
-            SelectManyIndirectIndexedEnumerator<
-                TEnumerator, 
-                TSource, 
-                TSourceEnumerator, 
-                TIndirect, 
-                TResult
-            >,
-            TResult
-        >
-            GetEnumerable (
-                in TEnumerator enumerator,
-                Func<
-                    TSource, 
-                    int, 
-                    EnumerableAdapter<TSourceEnumerator, TIndirect>
-                > collectionSelector,
-                Func<TSource, TIndirect, TResult> resultSelector
-            ) =>
-            new EnumerableAdapter<
-                SelectManyIndirectIndexedEnumerator<
-                    TEnumerator, 
-                    TSource, 
-                    TSourceEnumerator, 
-                    TIndirect, 
-                    TResult
-                >,
-                TResult
-            >(
-                enumerator:new SelectManyIndirectIndexedEnumerator<
-                    TEnumerator, 
-                    TSource, 
-                    TSourceEnumerator, 
-                    TIndirect, 
-                    TResult
-                >(
-                    enumerator:enumerator, 
-                    collectionSelector:collectionSelector,
-                    resultSelector:resultSelector
-                )
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private SelectManyIndirectIndexedEnumerator (
+        public SelectManyIndirectIndexedEnumerator (
             in TEnumerator enumerator,
-            Func<
-                TSource, 
-                int, 
-                EnumerableAdapter<TSourceEnumerator, TIndirect>
-            > collectionSelector,
+            Func<TSource, int, EnumerableAdapter<TSourceEnumerator, TIndirect>> collectionSelector,
             Func<TSource, TIndirect, TResult> resultSelector
         ) {
             m_enumerator = enumerator;

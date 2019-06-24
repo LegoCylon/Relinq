@@ -31,16 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult> GetEnumerable (
-            in TEnumerator enumerator
-        ) => 
-            new EnumerableAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult>(
-                enumerator:new OfTypeEnumerator<TEnumerator, TSource, TResult>(enumerator:enumerator)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private OfTypeEnumerator (in TEnumerator enumerator) {
+        public OfTypeEnumerator (in TEnumerator enumerator) {
             m_enumerator = enumerator;
         }
         

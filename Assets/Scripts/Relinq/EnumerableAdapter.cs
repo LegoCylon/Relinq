@@ -81,7 +81,10 @@ namespace Relinq {
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<AppendEnumerator<TEnumerator, TSource>, TSource> Append (TSource element) => 
-            AppendEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, element:element);
+            new EnumerableAdapter<AppendEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new AppendEnumerator<TEnumerator, TSource>(enumerator:m_enumerator, element:element)
+            )
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<CastEnumerator<TEnumerator, TSource, TResult>, TResult> Cast<TResult> () 
@@ -92,9 +95,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<CastEnumerator<TEnumerator, TSource, TResult>, TResult>
             Cast<TResult> (Func<TSource, TResult> resultSelector) =>
-            CastEnumerator<TEnumerator, TSource, TResult>.GetEnumerable(
-                enumerator:m_enumerator, 
-                resultSelector:resultSelector
+            new EnumerableAdapter<CastEnumerator<TEnumerator, TSource, TResult>, TResult>(
+                enumerator:new CastEnumerator<TEnumerator, TSource, TResult>(
+                    enumerator:m_enumerator, 
+                    resultSelector:resultSelector
+                )
             )
         ;
 
@@ -103,9 +108,11 @@ namespace Relinq {
             Concat<TSecondEnumerator> (in EnumerableAdapter<TSecondEnumerator, TSource> second)
             where TSecondEnumerator : IAdaptableEnumerator<TSource>
             => 
-            ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>.GetEnumerable(
-                first:m_enumerator, 
-                second:second.m_enumerator
+            new EnumerableAdapter<ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>, TSource>(
+                enumerator:new ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>(
+                    first:m_enumerator,
+                    second:second.m_enumerator
+                )
             )
         ;
         
@@ -336,35 +343,50 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult> OfType<TResult> ()
             where TResult : class, TSource =>
-            OfTypeEnumerator<TEnumerator, TSource, TResult>.GetEnumerable(enumerator:m_enumerator);
+            new EnumerableAdapter<OfTypeEnumerator<TEnumerator, TSource, TResult>, TResult>(
+                enumerator:new OfTypeEnumerator<TEnumerator, TSource, TResult>(enumerator:m_enumerator)
+            )
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
-        public EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource> Prepend (TSource element) => 
-            PrependEnumerator<TEnumerator, TSource>.GetEnumerable(element:element, enumerator:m_enumerator);
+        public EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource> Prepend (TSource element) =>
+            new EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new PrependEnumerator<TEnumerator, TSource>(element:element, enumerator:m_enumerator)
+            )
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>
             Replace (TSource what, TSource with, IEqualityComparer<TSource> equalityComparer) =>
-            ReplaceEnumerator<TEnumerator, TSource>.GetEnumerable(
-                enumerator:m_enumerator, 
-                what:what, 
-                with:with, 
-                equalityComparer:equalityComparer
+            new EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new ReplaceEnumerator<TEnumerator, TSource>(
+                    enumerator:m_enumerator, 
+                    replaceWhat:what, 
+                    replaceWith:with, 
+                    equalityComparer:equalityComparer
+                )
             )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<SelectEnumerator<TEnumerator, TSource, TResult>, TResult>
             Select<TResult> (Func<TSource, TResult> selector) =>
-            SelectEnumerator<TEnumerator, TSource, TResult>.GetEnumerable(enumerator:m_enumerator, selector:selector)
+            new EnumerableAdapter<SelectEnumerator<TEnumerator, TSource, TResult>, TResult>(
+                enumerator:new SelectEnumerator<TEnumerator, TSource, TResult>(
+                    enumerator:m_enumerator, 
+                    selector:selector
+                )
+            )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<SelectIndexedEnumerator<TEnumerator, TSource, TResult>, TResult> 
             Select<TResult> (Func<TSource, int, TResult> selector) =>
-            SelectIndexedEnumerator<TEnumerator, TSource, TResult>.GetEnumerable(
-                enumerator:m_enumerator,
-                selector:selector
+            new EnumerableAdapter<SelectIndexedEnumerator<TEnumerator, TSource, TResult>, TResult>(
+                enumerator:new SelectIndexedEnumerator<TEnumerator, TSource, TResult>(
+                    enumerator:m_enumerator,
+                    selector:selector
+                )
             )
         ;
 
@@ -375,9 +397,11 @@ namespace Relinq {
             )
             where TSourceEnumerator : IAdaptableEnumerator<TResult>
             =>
-            SelectManyEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>.GetEnumerable(
-                enumerator:m_enumerator, 
-                selector:selector
+            new EnumerableAdapter<SelectManyEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>, TResult>(
+                    enumerator:new SelectManyEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>(
+                    enumerator:m_enumerator, 
+                    selector:selector
+                )
             )
         ;
 
@@ -391,9 +415,14 @@ namespace Relinq {
             )
             where TSourceEnumerator : IAdaptableEnumerator<TResult>
             =>
-            SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>.GetEnumerable(
-                enumerator:m_enumerator, 
-                selector:selector
+            new EnumerableAdapter<
+                SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>, 
+                TResult
+            >(
+                enumerator:new SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>(
+                    enumerator:m_enumerator, 
+                    selector:selector
+                )
             )
         ;
         
@@ -414,16 +443,23 @@ namespace Relinq {
             )
             where TSourceEnumerator : IAdaptableEnumerator<TIndirect>
             =>
-            SelectManyIndirectEnumerator<
-                TEnumerator, 
-                TSource, 
-                TSourceEnumerator, 
-                TIndirect, 
+            new EnumerableAdapter<
+                SelectManyIndirectEnumerator<
+                    TEnumerator, 
+                    TSource, 
+                    TSourceEnumerator, 
+                    TIndirect, 
+                    TResult
+                >,
                 TResult
-            >.GetEnumerable(
-                enumerator:m_enumerator, 
-                collectionSelector:collectionSelector,
-                resultSelector:resultSelector
+            >(
+                enumerator:new SelectManyIndirectEnumerator<
+                    TEnumerator, 
+                    TSource, 
+                    TSourceEnumerator, 
+                    TIndirect, 
+                    TResult
+                >(enumerator:m_enumerator, collectionSelector:collectionSelector, resultSelector:resultSelector)
             )
         ;
 
@@ -439,25 +475,32 @@ namespace Relinq {
             TResult
         >
             SelectMany<TSourceEnumerator, TIndirect, TResult> (
-                Func<
-                    TSource, 
-                    int, 
-                    EnumerableAdapter<TSourceEnumerator, TIndirect>
-                > collectionSelector,
+                Func<TSource, int,EnumerableAdapter<TSourceEnumerator, TIndirect>> collectionSelector,
                 Func<TSource, TIndirect, TResult> resultSelector
             )
             where TSourceEnumerator : IAdaptableEnumerator<TIndirect>
             =>
-            SelectManyIndirectIndexedEnumerator<
-                TEnumerator, 
-                TSource, 
-                TSourceEnumerator, 
-                TIndirect, 
+            new EnumerableAdapter<
+                SelectManyIndirectIndexedEnumerator<
+                    TEnumerator, 
+                    TSource, 
+                    TSourceEnumerator, 
+                    TIndirect, 
+                    TResult
+                >,
                 TResult
-            >.GetEnumerable(
-                enumerator:m_enumerator, 
-                collectionSelector:collectionSelector,
-                resultSelector:resultSelector
+            >(
+                enumerator:new SelectManyIndirectIndexedEnumerator<
+                    TEnumerator, 
+                    TSource, 
+                    TSourceEnumerator, 
+                    TIndirect, 
+                    TResult
+                >(
+                    enumerator:m_enumerator, 
+                    collectionSelector:collectionSelector,
+                    resultSelector:resultSelector
+                )
             )
         ;
         
@@ -538,41 +581,58 @@ namespace Relinq {
         
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<SkipEnumerator<TEnumerator, TSource>, TSource> Skip (int count) =>
-            SkipEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, count:count)
+            new EnumerableAdapter<SkipEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new SkipEnumerator<TEnumerator, TSource>(enumerator:m_enumerator, count:count)
+            )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource> SkipWhile (
             Func<TSource, bool> predicate
-        ) => SkipWhileEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, predicate:predicate);
+        ) =>
+            new EnumerableAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new SkipWhileEnumerator<TEnumerator, TSource>(enumerator:m_enumerator, predicate:predicate)
+            )
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<SkipWhileIndexedEnumerator<TEnumerator, TSource>, TSource> SkipWhile (
             Func<TSource, int, bool> predicate
-        ) => SkipWhileIndexedEnumerator<TEnumerator, TSource>.GetEnumerable(
-                enumerator:m_enumerator, 
-                predicate:predicate
+        ) => 
+            new EnumerableAdapter<SkipWhileIndexedEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new SkipWhileIndexedEnumerator<TEnumerator, TSource>(
+                    enumerator:m_enumerator, 
+                    predicate:predicate
+                )
             )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<TakeEnumerator<TEnumerator, TSource>, TSource> Take (int count) =>
-            TakeEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, count:count)
+            new EnumerableAdapter<TakeEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new TakeEnumerator<TEnumerator, TSource>(enumerator:m_enumerator, count:count)
+            )
         ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<TakeWhileEnumerator<TEnumerator, TSource>, TSource> TakeWhile (
             Func<TSource, bool> predicate
-        ) => TakeWhileEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, predicate:predicate);
+        ) =>
+            new EnumerableAdapter<TakeWhileEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new TakeWhileEnumerator<TEnumerator, TSource>(enumerator:m_enumerator, predicate:predicate)
+            )
+        ;
         
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<TakeWhileIndexedEnumerator<TEnumerator, TSource>, TSource> TakeWhile (
             Func<TSource, int, bool> predicate
         ) =>
-            TakeWhileIndexedEnumerator<TEnumerator, TSource>.GetEnumerable(
-                enumerator:m_enumerator, 
-                predicate:predicate
-            ) 
+            new EnumerableAdapter<TakeWhileIndexedEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new TakeWhileIndexedEnumerator<TEnumerator, TSource>(
+                    enumerator:m_enumerator, 
+                    predicate:predicate
+                )
+            )
         ;
         
         //--------------------------------------------------------------------------------------------------------------
@@ -592,14 +652,23 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        public EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource> Where (
-            Func<TSource, bool> predicate
-        ) => WhereEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, predicate:predicate);
+        public EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource> Where (Func<TSource, bool> predicate) 
+            => new EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new WhereEnumerator<TEnumerator, TSource>(enumerator:m_enumerator, predicate:predicate)
+            )
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<WhereIndexedEnumerator<TEnumerator, TSource>, TSource> Where (
             Func<TSource, int, bool> predicate
-        ) => WhereIndexedEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator, predicate:predicate);
+        ) =>
+            new EnumerableAdapter<WhereIndexedEnumerator<TEnumerator, TSource>, TSource>(
+                enumerator:new WhereIndexedEnumerator<TEnumerator, TSource>(
+                    enumerator:m_enumerator, 
+                    predicate:predicate
+                )
+            )
+        ;
         
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<
@@ -612,10 +681,17 @@ namespace Relinq {
             )
             where TSecondEnumerator : IAdaptableEnumerator<TSecondSource>
             =>
-            ZipEnumerator<TEnumerator, TSource, TSecondEnumerator, TSecondSource, TResult>.GetEnumerable(
-                first:m_enumerator, 
-                second:second.m_enumerator, 
-                resultSelector:resultSelector
+            new EnumerableAdapter<
+                ZipEnumerator<TEnumerator, TSource, TSecondEnumerator, TSecondSource, TResult>, 
+                TResult
+            >(
+                enumerator:new ZipEnumerator<
+                    TEnumerator, 
+                    TSource, 
+                    TSecondEnumerator, 
+                    TSecondSource, 
+                    TResult
+                >(first:m_enumerator, second:second.m_enumerator, resultSelector:resultSelector)
             )
         ;
     }

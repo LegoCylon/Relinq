@@ -31,17 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<SkipEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator,
-            int count
-        ) =>
-            new EnumerableAdapter<SkipEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new SkipEnumerator<TEnumerator, TSource>(enumerator:enumerator, count:count)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private SkipEnumerator (in TEnumerator enumerator, int count) {
+        public SkipEnumerator (in TEnumerator enumerator, int count) {
             m_enumerator = enumerator;
             m_count = count;
             Setup();

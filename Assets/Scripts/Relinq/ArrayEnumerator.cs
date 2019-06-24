@@ -32,14 +32,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ArrayEnumerator<TSource>, TSource> GetEnumerable (TSource[] array) => 
-            new EnumerableAdapter<ArrayEnumerator<TSource>, TSource>(
-                enumerator:new ArrayEnumerator<TSource>(array:array)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private ArrayEnumerator (TSource[] array) {
+        public ArrayEnumerator (TSource[] array) {
             m_array = array;
             m_index = 0;
         }

@@ -43,27 +43,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<
-            SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>,
-            TResult
-        >
-            GetEnumerable (
-                in TEnumerator enumerator,
-                Func<TSource, int, EnumerableAdapter<TSourceEnumerator, TResult>> selector
-            ) =>
-            new EnumerableAdapter<
-                SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>, 
-                TResult
-            >(
-                enumerator:new SelectManyIndexedEnumerator<TEnumerator, TSource, TSourceEnumerator, TResult>(
-                    enumerator:enumerator, 
-                    selector:selector
-                )
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private SelectManyIndexedEnumerator (
+        public SelectManyIndexedEnumerator (
             in TEnumerator enumerator, 
             Func<TSource, int, EnumerableAdapter<TSourceEnumerator, TResult>> selector
         ) {

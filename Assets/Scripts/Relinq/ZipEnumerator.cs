@@ -33,31 +33,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<
-            ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult>,
-            TResult
-        >
-            GetEnumerable (
-                in TFirstEnumerator first,
-                in TSecondEnumerator second,
-                Func<TFirstSource, TSecondSource, TResult> resultSelector
-            ) =>
-            new EnumerableAdapter<
-                ZipEnumerator<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult>, 
-                TResult
-            >(
-                enumerator:new ZipEnumerator<
-                    TFirstEnumerator, 
-                    TFirstSource, 
-                    TSecondEnumerator, 
-                    TSecondSource, 
-                    TResult
-                >(first:first, second:second, resultSelector:resultSelector)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private ZipEnumerator (
+        public ZipEnumerator (
             in TFirstEnumerator first, 
             in TSecondEnumerator second, 
             Func<TFirstSource, TSecondSource, TResult> resultSelector

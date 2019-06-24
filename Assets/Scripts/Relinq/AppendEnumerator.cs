@@ -55,17 +55,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<AppendEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator, 
-            TSource element
-        ) => 
-            new EnumerableAdapter<AppendEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new AppendEnumerator<TEnumerator, TSource>(enumerator:enumerator, element:element)
-            )
-        ;
-
-        //--------------------------------------------------------------------------------------------------------------
-        private AppendEnumerator (in TEnumerator enumerator, TSource element) {
+        public AppendEnumerator (in TEnumerator enumerator, TSource element) {
             m_enumerator = enumerator;
             m_element = element;
             m_state = State.Default;

@@ -32,17 +32,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            TSource element,
-            in TEnumerator enumerator
-        ) => 
-            new EnumerableAdapter<PrependEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new PrependEnumerator<TEnumerator, TSource>(element:element, enumerator:enumerator)
-            )
-        ; 
-
-        //--------------------------------------------------------------------------------------------------------------
-        private PrependEnumerator (TSource element, in TEnumerator enumerator) {
+        public PrependEnumerator (TSource element, in TEnumerator enumerator) {
             m_index = 0;
             m_element = element;
             m_enumerator = enumerator;

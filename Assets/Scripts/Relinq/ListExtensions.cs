@@ -19,7 +19,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<ListEnumerator<TSource>, TSource> AsEnumerable<TSource> (
             this List<TSource> list
-        ) => ListEnumerator<TSource>.GetEnumerable(list:list);
+        ) => new EnumerableAdapter<ListEnumerator<TSource>, TSource>(enumerator:new ListEnumerator<TSource>(list:list));
 
         //--------------------------------------------------------------------------------------------------------------
         public static void Add<TEnumerator, TSource> (

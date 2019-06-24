@@ -31,17 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<RepeatEnumerator<TSource>, TSource> GetEnumerable (
-            TSource element, 
-            int count
-        ) => 
-            new EnumerableAdapter<RepeatEnumerator<TSource>, TSource>(
-                enumerator:new RepeatEnumerator<TSource>(element:element, count:count)
-            )
-        ;
-
-        //--------------------------------------------------------------------------------------------------------------
-        private RepeatEnumerator (TSource element, int count) {
+        public RepeatEnumerator (TSource element, int count) {
             m_element = element;
             m_count = count;
             m_index = 0;

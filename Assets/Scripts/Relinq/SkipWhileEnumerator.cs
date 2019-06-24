@@ -54,23 +54,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator,
-            Func<TSource, bool> predicate
-        ) =>
-            new EnumerableAdapter<SkipWhileEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new SkipWhileEnumerator<TEnumerator, TSource>(
-                    enumerator:enumerator, 
-                    predicate:predicate
-                )
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private SkipWhileEnumerator (
-            in TEnumerator enumerator, 
-            Func<TSource, bool> predicate
-        ) {
+        public SkipWhileEnumerator (in TEnumerator enumerator, Func<TSource, bool> predicate) {
             m_enumerator = enumerator;
             m_predicate = predicate;
             m_state = State.Default;

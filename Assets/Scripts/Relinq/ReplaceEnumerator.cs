@@ -38,24 +38,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator, 
-            TSource what, 
-            TSource with, 
-            IEqualityComparer<TSource> equalityComparer
-        ) =>
-            new EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new ReplaceEnumerator<TEnumerator, TSource>(
-                    enumerator:enumerator, 
-                    replaceWhat:what, 
-                    replaceWith:with, 
-                    equalityComparer:equalityComparer
-                )
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private ReplaceEnumerator (
+        public ReplaceEnumerator (
             in TEnumerator enumerator,
             TSource replaceWhat,
             TSource replaceWith,

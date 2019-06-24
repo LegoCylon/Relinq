@@ -17,7 +17,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public static EnumerableAdapter<ArrayEnumerator<TSource>, TSource> AsEnumerable<TSource> (
             this TSource[] array
-        ) => ArrayEnumerator<TSource>.GetEnumerable(array:array);
+        ) =>
+            new EnumerableAdapter<ArrayEnumerator<TSource>, TSource>(
+                enumerator:new ArrayEnumerator<TSource>(array:array)
+            )
+        ;
     }
     
 }

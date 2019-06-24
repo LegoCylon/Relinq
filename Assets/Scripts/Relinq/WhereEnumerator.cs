@@ -31,17 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator,
-            Func<TSource, bool> predicate
-        ) =>
-            new EnumerableAdapter<WhereEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new WhereEnumerator<TEnumerator, TSource>(enumerator:enumerator, predicate:predicate)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private WhereEnumerator (in TEnumerator enumerator, Func<TSource, bool> predicate) {
+        public WhereEnumerator (in TEnumerator enumerator, Func<TSource, bool> predicate) {
             m_enumerator = enumerator;
             m_predicate = predicate ?? throw new ArgumentNullException(paramName:nameof(predicate));
         }

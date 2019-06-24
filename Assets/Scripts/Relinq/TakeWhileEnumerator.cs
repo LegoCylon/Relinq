@@ -52,20 +52,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<TakeWhileEnumerator<TEnumerator, TSource>, TSource> GetEnumerable (
-            in TEnumerator enumerator,
-            Func<TSource, bool> predicate
-        ) =>
-            new EnumerableAdapter<TakeWhileEnumerator<TEnumerator, TSource>, TSource>(
-                enumerator:new TakeWhileEnumerator<TEnumerator, TSource>(enumerator:enumerator, predicate:predicate)
-            )
-        ;
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private TakeWhileEnumerator (
-            in TEnumerator enumerator, 
-            Func<TSource, bool> predicate
-        ) {
+        public TakeWhileEnumerator (in TEnumerator enumerator, Func<TSource, bool> predicate) {
             m_enumerator = enumerator;
             m_predicate = predicate;
             m_state = State.Default;
