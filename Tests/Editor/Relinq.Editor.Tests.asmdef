@@ -1,7 +1,7 @@
 {
     "name": "Relinq.Editor.Tests",
     "references": [
-        "Relinq"
+        "Relinq.Runtime"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
