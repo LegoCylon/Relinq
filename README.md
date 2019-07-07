@@ -55,9 +55,12 @@
   * Returns an enumerable which will substitute `with` for all instances of `what` in the original enumerable.
 
 # Usage
-Add `using Relinq;` to each file you want to be able to use one of the methods above.
-
-At each callsite that you prefer to use Relinq rather than Linq, call `.AsEnumerable()` to convert enumerables into `EnumerableAdapter<TEnumerator, TSource>` instances. It's intentional that the name AsEnumerable conflicts with another Linq method of the same name - to help reinforce that mixing calls to both libraries is going to result in heap allocations when Linq is used by mistake.
+* Unity
+  * Add `"com.github.legocylon.relinq": "https://github.com/LegoCylon/Relinq.git",` to the manifest.json file in your project's Packages folder.
+  * After Unity imports the package, it will add a lock section with the package name (`com.github.legocylon.relinq`) pinning you to the latest master commit SHA for the package on github. If you want to update to a newer version, delete the lock section for this package or manually update the SHA to the version you want to use.
+* C#
+  * Add `using Relinq;` to each file you want to be able to use one of the methods above.
+  * At each callsite that you prefer to use Relinq rather than Linq, call `.AsEnumerable()` to convert enumerables into `EnumerableAdapter<TEnumerator, TSource>` instances. It's intentional that the name AsEnumerable conflicts with another Linq method of the same name - to help reinforce that mixing calls to both libraries is going to result in heap allocations when Linq is used by mistake.
 
 # Implementation Details
 The algorithms use stack memory embedded in value type structs to maintain state rather than heap memory. While this avoids generating garbage, it will require additional stack memory for most algorithms which can get expensive as they are nested.
