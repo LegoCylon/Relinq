@@ -47,9 +47,7 @@ namespace Relinq {
             m_enumerator = enumerator;
             m_replaceWhat = replaceWhat;
             m_replaceWith = replaceWith;
-            m_equalityComparer = 
-                equalityComparer ?? throw new ArgumentNullException(paramName:nameof(equalityComparer))
-            ;
+            m_equalityComparer = equalityComparer ?? EqualityComparer<TSource>.Default;
         }
         
         //--------------------------------------------------------------------------------------------------------------

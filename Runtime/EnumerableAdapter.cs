@@ -356,6 +356,11 @@ namespace Relinq {
         ;
 
         //--------------------------------------------------------------------------------------------------------------
+        public EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource> Replace (TSource what, TSource with)
+            => Replace(what:what, with:with, equalityComparer:null)
+        ;
+
+        //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>
             Replace (TSource what, TSource with, IEqualityComparer<TSource> equalityComparer) =>
             new EnumerableAdapter<ReplaceEnumerator<TEnumerator, TSource>, TSource>(
