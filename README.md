@@ -36,6 +36,9 @@
 
 # Supported Enumerables
 * [Array](https://docs.microsoft.com/en-us/dotnet/api/system.array?view=netframework-4.7.2)
+* [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=netframework-4.7.2)
+* [HashSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1?view=netframework-4.7.2)
+* [LinkedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.linkedlist-1?view=netframework-4.7.2)
 * [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1?view=netframework-4.7.2)
 
 # Additional Algorithms

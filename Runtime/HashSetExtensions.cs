@@ -13,25 +13,15 @@ using System.Collections.Generic;
 
 namespace Relinq {
 
-    public static class ListExtensions {
+    public static class HashSetExtensions {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ListEnumerator<TSource>, TSource> AsEnumerable<TSource> (
-            this List<TSource> list
-        ) => new EnumerableAdapter<ListEnumerator<TSource>, TSource>(enumerator:new ListEnumerator<TSource>(list:list));
-
-        //--------------------------------------------------------------------------------------------------------------
-        public static void AddRange<TEnumerator, TSource> (
-            this List<TSource> list,
-            EnumerableAdapter<TEnumerator, TSource> enumerable
-        )
-            where TEnumerator : IAdaptableEnumerator<TSource>
-        {
-            foreach (var element in enumerable) {
-                list.Add(item:element);
-            }
-        }
+        public static EnumerableAdapter<HashSetEnumerator<TSource>, TSource> AsEnumerable<TSource> (
+            this HashSet<TSource> hashSet
+        ) => new EnumerableAdapter<HashSetEnumerator<TSource>, TSource>(
+            enumerator:new HashSetEnumerator<TSource>(hashSet:hashSet)
+        );
     }
     
 }

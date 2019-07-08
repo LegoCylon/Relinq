@@ -13,25 +13,15 @@ using System.Collections.Generic;
 
 namespace Relinq {
 
-    public static class ListExtensions {
+    public static class DictionaryExtensions {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<ListEnumerator<TSource>, TSource> AsEnumerable<TSource> (
-            this List<TSource> list
-        ) => new EnumerableAdapter<ListEnumerator<TSource>, TSource>(enumerator:new ListEnumerator<TSource>(list:list));
-
-        //--------------------------------------------------------------------------------------------------------------
-        public static void AddRange<TEnumerator, TSource> (
-            this List<TSource> list,
-            EnumerableAdapter<TEnumerator, TSource> enumerable
-        )
-            where TEnumerator : IAdaptableEnumerator<TSource>
-        {
-            foreach (var element in enumerable) {
-                list.Add(item:element);
-            }
-        }
+        public static EnumerableAdapter<DictionaryEnumerator<TKey, TValue>, KeyValuePair<TKey, TValue>> 
+            AsEnumerable<TKey, TValue> (this Dictionary<TKey, TValue> dictionary) => 
+            new EnumerableAdapter<DictionaryEnumerator<TKey, TValue>, KeyValuePair<TKey, TValue>>(
+            enumerator:new DictionaryEnumerator<TKey, TValue>(dictionary:dictionary)
+        );
     }
     
 }

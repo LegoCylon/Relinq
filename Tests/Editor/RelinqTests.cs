@@ -317,6 +317,35 @@ namespace Tests.EditMode {
             }
             AssertAreEqual(expected:source.Count > 0 ? source.Count : 1, actual:visited);
         }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void Dictionary () {
+            var empty = new Dictionary<int, string>();
+            var diff = new Dictionary<int, string> {
+                {  0, "0" }, 
+                {  1, "1" }, 
+                {  2, "2" }, 
+            };
+            
+            TestNoGC(code:() => Dictionary(source:empty));
+            TestNoGC(code:() => Dictionary(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Dictionary<TKey, TValue> (Dictionary<TKey, TValue> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var test in enumerable) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current.Key, actual:test.Key);
+                    AssertAreEqual(expected:enumerator.Current.Value, actual:test.Value);
+                    ++visited;
+                }
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
+        }
         
         //--------------------------------------------------------------------------------------------------------------
         [Test]
@@ -468,6 +497,30 @@ namespace Tests.EditMode {
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
+        public static void HashSet () {
+            var empty = new HashSet<int>();
+            var diff = new HashSet<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => HashSet(source:empty));
+            TestNoGC(code:() => HashSet(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void HashSet<TSource> (HashSet<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var test in enumerable) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:test);
+                    ++visited;
+                }
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
         public static void Last () {
             var empty = new List<int>();
             var zero = new List<int>(collection:new[] { 2, 1, 0 });
@@ -562,6 +615,30 @@ namespace Tests.EditMode {
             var enumerable = source.AsEnumerable();
             var result = enumerable.LastOrDefault(predicate:predicate);
             AssertAreEqual(expected:expected, actual:result);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void LinkedList () {
+            var empty = new LinkedList<int>();
+            var diff = new LinkedList<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => LinkedList(source:empty));
+            TestNoGC(code:() => LinkedList(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void LinkedList<TSource> (LinkedList<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var test in enumerable) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:test);
+                    ++visited;
+                }
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
         }
 
         //--------------------------------------------------------------------------------------------------------------
