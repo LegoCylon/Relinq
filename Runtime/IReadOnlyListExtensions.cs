@@ -14,35 +14,15 @@ using System.Collections.Generic;
 namespace Relinq {
 
     // ReSharper disable once InconsistentNaming
-    public static class IListExtensions {
+    public static class IReadOnlyListExtensions {
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<IListEnumerator<TSource>, TSource> AsEnumerable<TSource> (
-            this IList<TSource> list
-        ) => new EnumerableAdapter<IListEnumerator<TSource>, TSource>(
-            enumerator:new IListEnumerator<TSource>(list:list)
+        public static EnumerableAdapter<IReadOnlyListEnumerator<TSource>, TSource> AsEnumerable<TSource> (
+            this IReadOnlyList<TSource> list
+        ) => new EnumerableAdapter<IReadOnlyListEnumerator<TSource>, TSource>(
+            enumerator:new IReadOnlyListEnumerator<TSource>(list:list)
         );
-
-        //--------------------------------------------------------------------------------------------------------------
-        public static void Add<TEnumerator, TSource> (
-            this IList<TSource> list,
-            EnumerableAdapter<TEnumerator, TSource> enumerable
-        ) 
-            where TEnumerator : IAdaptableEnumerator<TSource>
-            => list.AddRange(enumerable:enumerable);
-        
-        //--------------------------------------------------------------------------------------------------------------
-        public static void AddRange<TEnumerator, TSource> (
-            this IList<TSource> list,
-            EnumerableAdapter<TEnumerator, TSource> enumerable
-        )
-            where TEnumerator : IAdaptableEnumerator<TSource>
-        {
-            foreach (var element in enumerable) {
-                list.Add(item:element);
-            }
-        }
     }
     
 }

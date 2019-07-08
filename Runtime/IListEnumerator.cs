@@ -9,40 +9,50 @@
 //  See the License for the specific language governing permissions and limitations under the License.
 //======================================================================================================================
 
+using System;
 using System.Collections.Generic;
 
 namespace Relinq {
 
-    // ReSharper disable once InconsistentNaming
-    public static class IListExtensions {
+    public struct IListEnumerator<TSource> :
+        IAdaptableEnumerator<TSource>
+    {
+        //--------------------------------------------------------------------------------------------------------------
+        //  Properties
+        //--------------------------------------------------------------------------------------------------------------
+        public TSource Current => 
+            m_index > 0 && m_index <= m_list.Count ? m_list[m_index - 1] : throw new InvalidOperationException()
+        ;
+
+        //--------------------------------------------------------------------------------------------------------------
+        //  Variables
+        //--------------------------------------------------------------------------------------------------------------
+        private readonly IList<TSource> m_list;
+        private int m_index;
+
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public static EnumerableAdapter<IListEnumerator<TSource>, TSource> AsEnumerable<TSource> (
-            this IList<TSource> list
-        ) => new EnumerableAdapter<IListEnumerator<TSource>, TSource>(
-            enumerator:new IListEnumerator<TSource>(list:list)
-        );
+        public IListEnumerator (IList<TSource> list) {
+            m_list = list ?? throw new ArgumentNullException(paramName:nameof(list));
+            m_index = 0;
+        }
 
         //--------------------------------------------------------------------------------------------------------------
-        public static void Add<TEnumerator, TSource> (
-            this IList<TSource> list,
-            EnumerableAdapter<TEnumerator, TSource> enumerable
-        ) 
-            where TEnumerator : IAdaptableEnumerator<TSource>
-            => list.AddRange(enumerable:enumerable);
+        public void Dispose () { }
+
+        //--------------------------------------------------------------------------------------------------------------
+        public bool MoveNext () {
+            if (m_index >= m_list.Count) {
+                return false;
+            }
+
+            ++m_index;
+            return true;
+        }
         
         //--------------------------------------------------------------------------------------------------------------
-        public static void AddRange<TEnumerator, TSource> (
-            this IList<TSource> list,
-            EnumerableAdapter<TEnumerator, TSource> enumerable
-        )
-            where TEnumerator : IAdaptableEnumerator<TSource>
-        {
-            foreach (var element in enumerable) {
-                list.Add(item:element);
-            }
-        }
+        public void Reset () => m_index = 0;
     }
     
 }

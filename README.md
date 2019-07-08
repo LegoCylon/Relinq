@@ -53,6 +53,8 @@ Avoid explicitly referencing algorithm-specific enumerators where possible. They
 * [Array](https://docs.microsoft.com/en-us/dotnet/api/system.array?view=netframework-4.7.2)
 * [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=netframework-4.7.2)
 * [HashSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1?view=netframework-4.7.2)
+* [IList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ilist-1?view=netframework-4.7.2)
+* [IReadOnlyList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlylist-1?view=netframework-4.7.2)
 * [LinkedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.linkedlist-1?view=netframework-4.7.2)
 * [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1?view=netframework-4.7.2)
 * [Queue](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.queue-1?view=netframework-4.7.2)
@@ -95,6 +97,14 @@ The following enumerables were omitted because their enumerators generate garbag
   * [SortedDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sorteddictionary-2?view=netframework-4.7.2)
   * [SortedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedlist-2?view=netframework-4.7.2)
   * [SortedSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedset-1?view=netframework-4.7.2)
+  
+The following enumerables were omitted because their enumerators box and don't support indexers (which would allow implementing a non-boxing enumerator like we've done for `IList` and `IReadOnlyList`).
+* [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.icollection-1?view=netframework-4.7.2)
+* [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.idictionary-2?view=netframework-4.7.2)
+* [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.7.2)
+* [IReadOnlyCollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1?view=netframework-4.7.2)
+* [IReadOnlyDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlydictionary-2?view=netframework-4.7.2)
+* [ISet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iset-1?view=netframework-4.7.2)
 
 The following algorithms were omitted because they rely on converting the enumerables to sets or dictionaries for efficient execution:
   * [Distinct](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.distinct?view=netframework-4.7.2)
@@ -110,3 +120,7 @@ The following algorithms were omitted because they rely on converting the enumer
   * [Union](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.union?view=netframework-4.7.2)
 
 [Average](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.average?view=netframework-4.7.2) and [Sum](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.sum?view=netframework-4.7.2) weren't implemented because they have a ton of overloads, were outside my original use case, and can be implemented in terms of [Aggregate](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.aggregate?view=netframework-4.7.2).
+
+# To Do
+  * [ ] Update all enumerators to support indexers where possible
+  * [ ] Update all tests to support all enumerables

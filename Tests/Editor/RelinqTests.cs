@@ -521,6 +521,48 @@ namespace Tests.EditMode {
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
+        public static void IList () {
+            var empty = new List<int>();
+            var diff = new List<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => IList(source:empty));
+            TestNoGC(code:() => IList(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void IList<TSource> (IList<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            foreach (var test in enumerable) {
+                AssertAreEqual(expected:source[index:visited], actual:test);
+                ++visited;
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void IReadOnlyList () {
+            var empty = new List<int>();
+            var diff = new List<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => IReadOnlyList(source:empty));
+            TestNoGC(code:() => IReadOnlyList(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void IReadOnlyList<TSource> (IReadOnlyList<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            foreach (var test in enumerable) {
+                AssertAreEqual(expected:source[index:visited], actual:test);
+                ++visited;
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
         public static void Last () {
             var empty = new List<int>();
             var zero = new List<int>(collection:new[] { 2, 1, 0 });
