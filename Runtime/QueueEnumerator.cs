@@ -14,24 +14,24 @@ using System.Collections.Generic;
 
 namespace Relinq {
 
-    public struct DictionaryEnumerator<TKey, TValue> : IAdaptableEnumerator<KeyValuePair<TKey, TValue>> {
+    public struct QueueEnumerator<TSource> : IAdaptableEnumerator<TSource> {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        public KeyValuePair<TKey, TValue> Current => m_enumerator.Current;
+        public TSource Current => m_enumerator.Current;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
-        private readonly Dictionary<TKey, TValue> m_dictionary;
-        private Dictionary<TKey, TValue>.Enumerator m_enumerator;
+        private readonly Queue<TSource> m_queue;
+        private Queue<TSource>.Enumerator m_enumerator;
         
         //--------------------------------------------------------------------------------------------------------------
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
-        public DictionaryEnumerator (Dictionary<TKey, TValue> dictionary) {
-            m_dictionary = dictionary ?? throw new ArgumentNullException(paramName:nameof(dictionary));
-            m_enumerator = dictionary.GetEnumerator();
+        public QueueEnumerator (Queue<TSource> queue) {
+            m_queue = queue ?? throw new ArgumentNullException(paramName:nameof(queue));
+            m_enumerator = queue.GetEnumerator();
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ namespace Relinq {
         public bool MoveNext () => m_enumerator.MoveNext();
         
         //--------------------------------------------------------------------------------------------------------------
-        public void Reset () => m_enumerator = m_dictionary.GetEnumerator();
+        public void Reset () => m_enumerator = m_queue.GetEnumerator();
     }
     
 }

@@ -55,6 +55,8 @@ Avoid explicitly referencing algorithm-specific enumerators where possible. They
 * [HashSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1?view=netframework-4.7.2)
 * [LinkedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.linkedlist-1?view=netframework-4.7.2)
 * [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1?view=netframework-4.7.2)
+* [Queue](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.queue-1?view=netframework-4.7.2)
+* [Stack](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1?view=netframework-4.7.2)
 
 # Additional Algorithms
 * `int? EnumerableAdapter<TSource>.Mismatch<TSecondEnumerator> (EnumerableAdapter<TSecondEnumerator, TSource> second)`
@@ -82,6 +84,17 @@ The algorithms use stack memory embedded in value type structs to maintain state
 The value type enumerables use [duck typing](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/foreach-in) to facilitate foreach support rather than implementing `IEnumerable` or `IEnumerator`. This helps to avoid accidentally creating garbage when trying to pass the enumerables around.
 
 Although most of the algorithms themselves (with unavoidable exceptions like `ToList`) don't generate heap allocations, you may still generate them at the callsite if state is captured from the callsite (i.e. via a lambda closure).
+
+The following enumerables were omitted because their enumerators generate garbage since they're implemented as coroutines:
+  * [ConcurrentBag](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentbag-1?view=netframework-4.7.2)
+  * [ConcurrentDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=netframework-4.7.2)
+  * [ConcurrentQueue](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentqueue-1?view=netframework-4.7.2)
+  * [ConcurrentStack](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentstack-1?view=netframework-4.7.2)
+  
+The following enumerables were omitted because their enumerators generate garbage since they're implemented as a stack-based tree traversals:
+  * [SortedDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sorteddictionary-2?view=netframework-4.7.2)
+  * [SortedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedlist-2?view=netframework-4.7.2)
+  * [SortedSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedset-1?view=netframework-4.7.2)
 
 The following algorithms were omitted because they rely on converting the enumerables to sets or dictionaries for efficient execution:
   * [Distinct](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.distinct?view=netframework-4.7.2)

@@ -803,6 +803,30 @@ namespace Tests.EditMode {
             }
             AssertAreEqual(expected:source.Count + 1, actual:visited);
         }
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void Queue () {
+            var empty = new Queue<int>();
+            var diff = new Queue<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => Queue(source:empty));
+            TestNoGC(code:() => Queue(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Queue<TSource> (Queue<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var test in enumerable) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:test);
+                    ++visited;
+                }
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
+        }
         
         //--------------------------------------------------------------------------------------------------------------
         #if false
@@ -1337,7 +1361,30 @@ namespace Tests.EditMode {
             AssertAreEqual(expected:skipped, actual:source.Count - visited);
             AssertAreEqual(expected:remaining, actual:visited);
         }
-         
+
+        //--------------------------------------------------------------------------------------------------------------
+        [Test]
+        public static void Stack () {
+            var empty = new Stack<int>();
+            var diff = new Stack<int> { 0, 1, 2, };
+            
+            TestNoGC(code:() => Stack(source:empty));
+            TestNoGC(code:() => Stack(source:diff));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Stack<TSource> (Stack<TSource> source) {
+            var enumerable = source.AsEnumerable();
+            var visited = 0;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var test in enumerable) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:test);
+                    ++visited;
+                }
+            }
+            AssertAreEqual(expected:source.Count, actual:visited);
+        }
         
         //--------------------------------------------------------------------------------------------------------------
         [Test]
