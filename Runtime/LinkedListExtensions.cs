@@ -22,6 +22,11 @@ namespace Relinq {
         ) => new EnumerableAdapter<LinkedListEnumerator<TSource>, TSource>(
             enumerator:new LinkedListEnumerator<TSource>(linkedList:linkedList)
         );
+
+        //--------------------------------------------------------------------------------------------------------------
+        public static void Add<TSource> (this LinkedList<TSource> linkedList, TSource value) => 
+            linkedList.AddLast(value:value)
+        ;
         
         //--------------------------------------------------------------------------------------------------------------
         public static void AddRange<TEnumerator, TSource> (
