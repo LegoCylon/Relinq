@@ -104,6 +104,22 @@ namespace Relinq {
         ;
 
         //--------------------------------------------------------------------------------------------------------------
+        //  Methods
+        //--------------------------------------------------------------------------------------------------------------
+        public int Count () => Count(predicate:(value) => true);
+
+        //--------------------------------------------------------------------------------------------------------------
+        public int Count (Func<TSource, bool> predicate) {
+            predicate = predicate ?? throw new ArgumentNullException(paramName:nameof(predicate));
+            var count = 0;
+            foreach (var element in this) {
+                if (predicate(arg:element)) {
+                    ++count;
+                }
+            }
+            return count;
+        }
+        //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>, TSource> 
             Concat<TSecondEnumerator> (in EnumerableAdapter<TSecondEnumerator, TSource> second)
             where TSecondEnumerator : IAdaptableEnumerator<TSource>
@@ -699,36 +715,6 @@ namespace Relinq {
                 >(first:m_enumerator, second:second.m_enumerator, resultSelector:resultSelector)
             )
         ;
-    }
-
-    public static class EnumerableAdapterExtensions {
-        //--------------------------------------------------------------------------------------------------------------
-        //  Methods
-        //--------------------------------------------------------------------------------------------------------------
-        public static int Count<TEnumerator, TSource> (this EnumerableAdapter<TEnumerator, TSource> enumerable)
-            where TEnumerator : IAdaptableEnumerator<TSource>
-            =>
-            enumerable.Count(predicate:(value) => true)
-        ;
-
-        //--------------------------------------------------------------------------------------------------------------
-        public static int Count<TEnumerator, TSource> (
-            this EnumerableAdapter<TEnumerator, TSource> enumerable,
-            Func<TSource, bool> predicate
-        )
-            where TEnumerator : IAdaptableEnumerator<TSource>
-        {
-            if (predicate == null) {
-                throw new ArgumentNullException(paramName:nameof(predicate));
-            }
-            var count = 0;
-            foreach (var element in enumerable) {
-                if (predicate(arg:element)) {
-                    ++count;
-                }
-            }
-            return count;
-        }
     }
 
 }
