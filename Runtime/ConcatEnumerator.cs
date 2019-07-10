@@ -31,6 +31,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_first.Count + m_second.Count;
         public TSource Current {
             get {
                 switch (m_state) {
@@ -45,6 +46,11 @@ namespace Relinq {
                 }
             }
         }
+        public bool HasCount => m_first.HasCount && m_second.HasCount;
+        public bool HasIndexer => m_first.HasCount && m_second.HasCount && m_first.HasIndexer && m_second.HasIndexer;
+        public TSource this [int index] => 
+            index < m_first.Count ? m_first[index:index] : m_second[index:index - m_first.Count]
+        ; 
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

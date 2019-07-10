@@ -20,7 +20,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_enumerator.Count;
         public TResult Current => m_resultSelector(arg:m_enumerator.Current);
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer;
+        public TResult this [int index] => m_resultSelector(arg:m_enumerator[index:index]);
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

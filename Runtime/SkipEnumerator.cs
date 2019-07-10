@@ -20,7 +20,14 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => Math.Max(m_enumerator.Count - m_count, 0);
         public TSource Current => m_enumerator.Current;
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer && m_enumerator.HasCount;
+        public TSource this [int index] => index >= 0 && index < Count
+            ? m_enumerator[index:index - m_count]
+            : throw new InvalidOperationException()
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

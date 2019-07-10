@@ -30,6 +30,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => throw new NotSupportedException();
         public TSource Current {
             get {
                 switch (m_state) {
@@ -43,6 +44,9 @@ namespace Relinq {
                 }
             }
         }
+        public bool HasCount => false;
+        public bool HasIndexer => false;
+        public TSource this [int index] => throw new NotSupportedException();
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

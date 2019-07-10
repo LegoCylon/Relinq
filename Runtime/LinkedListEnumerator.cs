@@ -18,7 +18,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_linkedList.Count;
         public TSource Current => m_enumerator.Current;
+        public bool HasCount => true;
+        public bool HasIndexer => false;
+        public TSource this [int index] => throw new NotSupportedException();
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

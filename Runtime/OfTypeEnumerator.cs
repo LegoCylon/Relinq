@@ -21,7 +21,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => throw new NotSupportedException();
         public TResult Current => m_enumerator.Current as TResult;
+        public bool HasCount => false;
+        public bool HasIndexer => false;
+        public TResult this [int index] => throw new NotSupportedException();
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

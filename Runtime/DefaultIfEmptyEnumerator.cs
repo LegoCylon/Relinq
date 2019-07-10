@@ -30,6 +30,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => Math.Max(1, m_enumerator.Count);
         public TSource Current {
             get {
                 switch (m_state) {
@@ -42,6 +43,9 @@ namespace Relinq {
                 }
             }
         }
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer;
+        public TSource this [int index] => Count > 0 ? m_enumerator[index:index] : default;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

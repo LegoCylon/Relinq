@@ -13,42 +13,6 @@ This package is intended for situations where you want Linq functionality in sit
 
 Avoid explicitly referencing algorithm-specific enumerators where possible. They would be internal if it wasn't necessary for them to be instantiated at the callsite.
 
-# Supported Linq-like Algorithms
-* [Aggregate](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.aggregate?view=netframework-4.7.2)
-* [All](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.all?view=netframework-4.7.2)
-* [Any](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.any?view=netframework-4.7.2)
-* [Append](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.append?view=netframework-4.7.2)
-* [Cast](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.cast?view=netframework-4.7.2)
-* [Concat](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.concat?view=netframework-4.7.2)
-* [Contains](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.contains?view=netframework-4.7.2)
-* [Count](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.count?view=netframework-4.7.2)
-* [DefaultIfEmpty](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.defaultifempty?view=netframework-4.7.2)
-* [ElementAt](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.elementat?view=netframework-4.7.2)
-* [ElementAtOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.elementatordefault?view=netframework-4.7.2)
-* [Empty](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.7.2)
-* [First](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.first?view=netframework-4.7.2)
-* [FirstOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.firstordefault?view=netframework-4.7.2)
-* [Last](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.last?view=netframework-4.7.2)
-* [LastOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.lastordefault?view=netframework-4.7.2)
-* [Max](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.max?view=netframework-4.7.2)
-* [Min](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.min?view=netframework-4.7.2)
-* [OfType](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.oftype?view=netframework-4.7.2)
-* [Prepend](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.prepend?view=netframework-4.7.2)
-* [Range](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.range?view=netframework-4.7.2)
-* [Repeat](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.repeat?view=netframework-4.7.2)
-* [Select](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.select?view=netframework-4.7.2)
-* [SelectMany](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.selectmany?view=netframework-4.7.2)
-* [SequenceEqual](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.sequenceequal?view=netframework-4.7.2)
-* [Single](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.single?view=netframework-4.7.2)
-* [SingleOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.singleordefault?view=netframework-4.7.2)
-* [Skip](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.skip?view=netframework-4.7.2)
-* [SkipWhile](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.skipwhile?view=netframework-4.7.2)
-* [Take](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.take?view=netframework-4.7.2)
-* [TakeWhile](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.takewhile?view=netframework-4.7.2)
-* [ToList](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.tolist?view=netframework-4.7.2)
-* [Where](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.where?view=netframework-4.7.2)
-* [Zip](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.zip?view=netframework-4.7.2)
-
 # Supported Enumerables
 * [Array](https://docs.microsoft.com/en-us/dotnet/api/system.array?view=netframework-4.7.2)
 * [Dictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2?view=netframework-4.7.2)
@@ -59,6 +23,75 @@ Avoid explicitly referencing algorithm-specific enumerators where possible. They
 * [List](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1?view=netframework-4.7.2)
 * [Queue](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.queue-1?view=netframework-4.7.2)
 * [Stack](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1?view=netframework-4.7.2)
+
+# Unsupported Enumerables
+The following enumerables were omitted because their enumerators generate garbage since they're implemented as coroutines:
+  * [ConcurrentBag](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentbag-1?view=netframework-4.7.2)
+  * [ConcurrentDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=netframework-4.7.2)
+  * [ConcurrentQueue](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentqueue-1?view=netframework-4.7.2)
+  * [ConcurrentStack](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentstack-1?view=netframework-4.7.2)
+  
+The following enumerables were omitted because their enumerators generate garbage since they're implemented as a stack-based tree traversals:
+  * [SortedDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sorteddictionary-2?view=netframework-4.7.2)
+  * [SortedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedlist-2?view=netframework-4.7.2)
+  * [SortedSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedset-1?view=netframework-4.7.2)
+  
+The following enumerables were omitted because their enumerators box and don't support indexers (which would allow implementing a non-boxing enumerator like we've done for `IList` and `IReadOnlyList`).
+  * [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.icollection-1?view=netframework-4.7.2)
+  * [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.idictionary-2?view=netframework-4.7.2)
+  * [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.7.2)
+  * [IReadOnlyCollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1?view=netframework-4.7.2)
+  * [IReadOnlyDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlydictionary-2?view=netframework-4.7.2)
+  * [ISet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iset-1?view=netframework-4.7.2)
+
+# Supported Linq-like Algorithms
+* [Aggregate](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.aggregate?view=netframework-4.7.2)
+* [All](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.all?view=netframework-4.7.2)
+* [Any](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.any?view=netframework-4.7.2)
+* [Append](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.append?view=netframework-4.7.2)
+* [Cast](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.cast?view=netframework-4.7.2)
+* [Concat](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.concat?view=netframework-4.7.2)
+* [Contains](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.contains?view=netframework-4.7.2)
+* [Count](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.count?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting, otherwise O(N).
+* [DefaultIfEmpty](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.defaultifempty?view=netframework-4.7.2)
+* [ElementAt](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.elementat?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting and indexing, otherwise O(N).
+* [ElementAtOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.elementatordefault?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting and indexing, otherwise O(N).
+* [Empty](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.empty?view=netframework-4.7.2)
+* [First](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.first?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting and indexing, otherwise O(N).
+* [FirstOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.firstordefault?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting and indexing, otherwise O(N).
+* [Last](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.last?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting and indexing, otherwise O(N).
+* [LastOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.lastordefault?view=netframework-4.7.2)
+  * The predicate-less overload has O(1) complexity if the enumerable supports O(1) counting and indexing, otherwise O(N).
+* [Max](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.max?view=netframework-4.7.2)
+* [Min](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.min?view=netframework-4.7.2)
+* [OfType](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.oftype?view=netframework-4.7.2)
+  * Suppresses O(1) counting and indexing (due to its conditional nature) for subsequent operations on this enumerable.
+* [Prepend](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.prepend?view=netframework-4.7.2)
+* [Range](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.range?view=netframework-4.7.2)
+* [Repeat](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.repeat?view=netframework-4.7.2)
+* [Select](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.select?view=netframework-4.7.2)
+  * The predicate-less overload suppresses O(1) counting and indexing (due to its conditional nature) for subsequent operations on this enumerable.
+* [SelectMany](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.selectmany?view=netframework-4.7.2)
+  * The predicate-less overload suppresses O(1) counting and indexing (due to its conditional nature) for subsequent operations on this enumerable.
+* [SequenceEqual](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.sequenceequal?view=netframework-4.7.2)
+* [Single](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.single?view=netframework-4.7.2)
+* [SingleOrDefault](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.singleordefault?view=netframework-4.7.2)
+* [Skip](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.skip?view=netframework-4.7.2)
+* [SkipWhile](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.skipwhile?view=netframework-4.7.2)
+  * Suppresses O(1) counting and indexing (due to its conditional nature) for subsequent operations on this enumerable.
+* [Take](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.take?view=netframework-4.7.2)
+* [TakeWhile](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.takewhile?view=netframework-4.7.2)
+  * Suppresses O(1) counting and indexing (due to its conditional nature) for subsequent operations on this enumerable.
+* [ToList](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.tolist?view=netframework-4.7.2)
+* [Where](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.where?view=netframework-4.7.2)
+  * Suppresses O(1) counting and indexing (due to its conditional nature) for subsequent operations on this enumerable.
+* [Zip](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.zip?view=netframework-4.7.2)
 
 # Additional Algorithms
 * `int? EnumerableAdapter<TSource>.Mismatch<TSecondEnumerator> (EnumerableAdapter<TSecondEnumerator, TSource> second)`
@@ -80,32 +113,7 @@ Avoid explicitly referencing algorithm-specific enumerators where possible. They
 * `void EnumerableAdapter<TSource>.ToList (List<TSource> results)`
   * Converts the enumerable into the provided `results` list instance. Existing contents are not preserved.
 
-# Implementation Details
-The algorithms use stack memory embedded in value type structs to maintain state rather than heap memory. While this avoids generating garbage, it will require additional stack memory for most algorithms which can get expensive as they are nested. It also relies on a cardinal sin for C# - mutable value types (for the enumerators). However, since the enumerators for `Dictionary`, `HashSet`, `LinkedList`, and `List` already do that it seemed like a reasonable compromise.
-
-The value type enumerables use [duck typing](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/foreach-in) to facilitate foreach support rather than implementing `IEnumerable` or `IEnumerator`. This helps to avoid accidentally creating garbage when trying to pass the enumerables around.
-
-Although most of the algorithms themselves (with unavoidable exceptions like `ToList`) don't generate heap allocations, you may still generate them at the callsite if state is captured from the callsite (i.e. via a lambda closure). Consider using a [local function](https://docs.microsoft.com/en-us/dotnet/csharp/local-functions-vs-lambdas) where possible to reduce the cost of capturing.
-
-The following enumerables were omitted because their enumerators generate garbage since they're implemented as coroutines:
-  * [ConcurrentBag](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentbag-1?view=netframework-4.7.2)
-  * [ConcurrentDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2?view=netframework-4.7.2)
-  * [ConcurrentQueue](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentqueue-1?view=netframework-4.7.2)
-  * [ConcurrentStack](https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentstack-1?view=netframework-4.7.2)
-  
-The following enumerables were omitted because their enumerators generate garbage since they're implemented as a stack-based tree traversals:
-  * [SortedDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sorteddictionary-2?view=netframework-4.7.2)
-  * [SortedList](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedlist-2?view=netframework-4.7.2)
-  * [SortedSet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.sortedset-1?view=netframework-4.7.2)
-  
-The following enumerables were omitted because their enumerators box and don't support indexers (which would allow implementing a non-boxing enumerator like we've done for `IList` and `IReadOnlyList`).
-* [ICollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.icollection-1?view=netframework-4.7.2)
-* [IDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.idictionary-2?view=netframework-4.7.2)
-* [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1?view=netframework-4.7.2)
-* [IReadOnlyCollection](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1?view=netframework-4.7.2)
-* [IReadOnlyDictionary](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlydictionary-2?view=netframework-4.7.2)
-* [ISet](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iset-1?view=netframework-4.7.2)
-
+# Unsupported Algorithms
 The following algorithms were omitted because they rely on converting the enumerables to sets or dictionaries for efficient execution:
   * [Distinct](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.distinct?view=netframework-4.7.2)
   * [Except](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.except?view=netframework-4.7.2)
@@ -121,6 +129,12 @@ The following algorithms were omitted because they rely on converting the enumer
 
 [Average](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.average?view=netframework-4.7.2) and [Sum](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.sum?view=netframework-4.7.2) weren't implemented because they have a ton of overloads, were outside my original use case, and can be implemented in terms of [Aggregate](https://docs.microsoft.com/en-us/dotnet/api/system.linq.enumerable.aggregate?view=netframework-4.7.2).
 
+# Implementation Details
+The algorithms use stack memory embedded in value type structs to maintain state rather than heap memory. While this avoids generating garbage, it will require additional stack memory for most algorithms which can get expensive as they are nested. It also relies on a cardinal sin for C# - mutable value types (for the enumerators). However, since the enumerators for `Dictionary`, `HashSet`, `LinkedList`, and `List` already do that it seemed like a reasonable compromise.
+
+The value type enumerables use [duck typing](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/foreach-in) to facilitate foreach support rather than implementing `IEnumerable` or `IEnumerator`. This helps to avoid accidentally creating garbage when trying to pass the enumerables around.
+
+Although most of the algorithms themselves (with unavoidable exceptions like `ToList`) don't generate heap allocations, you may still generate them at the callsite if state is captured from the callsite (i.e. via a lambda closure). Consider using a [local function](https://docs.microsoft.com/en-us/dotnet/csharp/local-functions-vs-lambdas) where possible to reduce the cost of capturing.
+
 # To Do
-  * [ ] Update all enumerators to support indexers where possible
   * [ ] Update all tests to support all enumerables

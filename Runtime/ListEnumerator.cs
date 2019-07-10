@@ -18,7 +18,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_list.Count;
         public TSource Current => m_enumerator.Current;
+        public bool HasCount => true;
+        public bool HasIndexer => true;
+        public TSource this [int index] => m_list[index:index];
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

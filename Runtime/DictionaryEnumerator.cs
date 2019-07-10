@@ -18,7 +18,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_dictionary.Count;
         public KeyValuePair<TKey, TValue> Current => m_enumerator.Current;
+        public bool HasCount => true;
+        public bool HasIndexer => false;
+        public KeyValuePair<TKey, TValue> this [int index] => throw new NotSupportedException();
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

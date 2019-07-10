@@ -20,7 +20,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        public TSource Current => m_index > 1 ? m_enumerator.Current : m_element;
+        public int Count => 1 + m_enumerator.Count;
+        public TSource Current => m_index != 0 ? m_enumerator.Current : m_element;
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer;
+        public TSource this [int index] => index != 0 ? m_enumerator[index:index - 1] : m_element;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
@@ -33,7 +37,7 @@ namespace Relinq {
         //  Methods
         //--------------------------------------------------------------------------------------------------------------
         public PrependEnumerator (TSource element, in TEnumerator enumerator) {
-            m_index = 0;
+            m_index = -1;
             m_element = element;
             m_enumerator = enumerator;
         }
@@ -43,7 +47,7 @@ namespace Relinq {
 
         //--------------------------------------------------------------------------------------------------------------
         public bool MoveNext () {
-            if (m_index > 0 && !m_enumerator.MoveNext()) {
+            if (m_index >= 0 && !m_enumerator.MoveNext()) {
                 return false;
             }
             ++m_index;
@@ -53,7 +57,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public void Reset () {
             m_enumerator.Reset();
-            m_index = 0;
+            m_index = -1;
         }
     }
     

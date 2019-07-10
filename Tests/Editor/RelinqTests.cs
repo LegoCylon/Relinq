@@ -335,6 +335,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void Dictionary<TKey, TValue> (Dictionary<TKey, TValue> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:false, actual:enumerable.HasIndexer);
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
                 foreach (var test in enumerable) {
@@ -508,6 +511,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void HashSet<TSource> (HashSet<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:false, actual:enumerable.HasIndexer);
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
                 foreach (var test in enumerable) {
@@ -532,9 +538,13 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void IList<TSource> (IList<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:true, actual:enumerable.HasIndexer);
             var visited = 0;
             foreach (var test in enumerable) {
                 AssertAreEqual(expected:source[index:visited], actual:test);
+                AssertAreEqual(expected:source[index:visited], actual:enumerable[index:visited]);
                 ++visited;
             }
             AssertAreEqual(expected:source.Count, actual:visited);
@@ -553,9 +563,13 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void IReadOnlyList<TSource> (IReadOnlyList<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:true, actual:enumerable.HasIndexer);
             var visited = 0;
             foreach (var test in enumerable) {
                 AssertAreEqual(expected:source[index:visited], actual:test);
+                AssertAreEqual(expected:source[index:visited], actual:enumerable[index:visited]);
                 ++visited;
             }
             AssertAreEqual(expected:source.Count, actual:visited);
@@ -672,6 +686,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void LinkedList<TSource> (LinkedList<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:false, actual:enumerable.HasIndexer);
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
                 foreach (var test in enumerable) {
@@ -696,9 +713,13 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void List<TSource> (List<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:true, actual:enumerable.HasIndexer);
             var visited = 0;
             foreach (var test in enumerable) {
                 AssertAreEqual(expected:source[index:visited], actual:test);
+                AssertAreEqual(expected:source[index:visited], actual:enumerable[index:visited]);
                 ++visited;
             }
             AssertAreEqual(expected:source.Count, actual:visited);
@@ -859,6 +880,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void Queue<TSource> (Queue<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:false, actual:enumerable.HasIndexer);
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
                 foreach (var test in enumerable) {
@@ -1417,6 +1441,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         private static void Stack<TSource> (Stack<TSource> source) {
             var enumerable = source.AsEnumerable();
+            AssertAreEqual(expected:true, actual:enumerable.HasCount);
+            AssertAreEqual(expected:source.Count, actual:enumerable.Count());
+            AssertAreEqual(expected:false, actual:enumerable.HasIndexer);
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
                 foreach (var test in enumerable) {

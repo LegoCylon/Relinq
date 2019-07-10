@@ -30,6 +30,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_enumerator.Count + 1;
         public TSource Current {
             get {
                 switch (m_state) {
@@ -44,6 +45,9 @@ namespace Relinq {
                 }
             }
         }
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasCount && m_enumerator.HasIndexer;
+        public TSource this [int index] => index != m_enumerator.Count ? m_enumerator[index:index] : m_element;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

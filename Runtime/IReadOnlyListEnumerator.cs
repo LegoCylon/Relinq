@@ -20,9 +20,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        public TSource Current => 
-            m_index > 0 && m_index <= m_list.Count ? m_list[m_index - 1] : throw new InvalidOperationException()
-        ;
+        public int Count => m_list.Count;
+        public TSource Current => this[index:m_index];
+        public bool HasCount => true;
+        public bool HasIndexer => true;
+        public TSource this [int index] => m_list[index:index];
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
@@ -35,7 +37,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public IReadOnlyListEnumerator (IReadOnlyList<TSource> list) {
             m_list = list ?? throw new ArgumentNullException(paramName:nameof(list));
-            m_index = 0;
+            m_index = -1;
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -43,7 +45,7 @@ namespace Relinq {
 
         //--------------------------------------------------------------------------------------------------------------
         public bool MoveNext () {
-            if (m_index >= m_list.Count) {
+            if (m_index >= (m_list.Count - 1)) {
                 return false;
             }
 
@@ -52,7 +54,7 @@ namespace Relinq {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        public void Reset () => m_index = 0;
+        public void Reset () => m_index = -1;
     }
     
 }

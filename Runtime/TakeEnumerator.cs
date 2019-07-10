@@ -20,7 +20,13 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => Math.Min(m_enumerator.Count, m_count);
         public TSource Current => m_enumerator.Current;
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer;
+        public TSource this [int index] =>
+            index < m_count ? m_enumerator[index:index] : throw new InvalidOperationException()
+        ;
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

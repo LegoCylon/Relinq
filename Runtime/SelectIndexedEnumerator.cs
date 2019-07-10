@@ -20,7 +20,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => throw new NotSupportedException();
         public TResult Current => m_selector(arg1:m_enumerator.Current, arg2:m_visited - 1);
+        public bool HasCount => false;
+        public bool HasIndexer => false;
+        public TResult this [int index] => throw new NotSupportedException();
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

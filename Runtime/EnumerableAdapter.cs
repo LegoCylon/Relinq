@@ -19,6 +19,13 @@ namespace Relinq {
         where TEnumerator : IAdaptableEnumerator<TSource>
     {
         //--------------------------------------------------------------------------------------------------------------
+        //  Properties
+        //--------------------------------------------------------------------------------------------------------------
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer;
+        public TSource this [int index] => m_enumerator[index:index];
+
+        //--------------------------------------------------------------------------------------------------------------
         //  Variables
         //--------------------------------------------------------------------------------------------------------------
         private readonly TEnumerator m_enumerator;
@@ -102,23 +109,7 @@ namespace Relinq {
                 )
             )
         ;
-
-        //--------------------------------------------------------------------------------------------------------------
-        //  Methods
-        //--------------------------------------------------------------------------------------------------------------
-        public int Count () => Count(predicate:(value) => true);
-
-        //--------------------------------------------------------------------------------------------------------------
-        public int Count (Func<TSource, bool> predicate) {
-            predicate = predicate ?? throw new ArgumentNullException(paramName:nameof(predicate));
-            var count = 0;
-            foreach (var element in this) {
-                if (predicate(arg:element)) {
-                    ++count;
-                }
-            }
-            return count;
-        }
+        
         //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<ConcatEnumerable<TEnumerator, TSecondEnumerator, TSource>, TSource> 
             Concat<TSecondEnumerator> (in EnumerableAdapter<TSecondEnumerator, TSource> second)
@@ -147,6 +138,28 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
+        public int Count () {
+            if (HasCount) {
+                return m_enumerator.Count;
+            }
+            else {
+                return Count(predicate:(value) => true);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        public int Count (Func<TSource, bool> predicate) {
+            predicate = predicate ?? throw new ArgumentNullException(paramName:nameof(predicate));
+            var count = 0;
+            foreach (var element in this) {
+                if (predicate(arg:element)) {
+                    ++count;
+                }
+            }
+            return count;
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
         public EnumerableAdapter<DefaultIfEmptyEnumerator<TEnumerator, TSource>, TSource> DefaultIfEmpty () =>
             DefaultIfEmptyEnumerator<TEnumerator, TSource>.GetEnumerable(enumerator:m_enumerator)
         ;
@@ -155,6 +168,9 @@ namespace Relinq {
         public TSource ElementAt (int index) {
             if (index < 0) {
                 throw new ArgumentOutOfRangeException(paramName:nameof(index));
+            }
+            if (HasIndexer) {
+                return m_enumerator[index:index];
             }
             foreach (var element in this) {
                 if (index-- == 0) {
@@ -169,6 +185,9 @@ namespace Relinq {
             if (index < 0) {
                 throw new ArgumentOutOfRangeException(paramName:nameof(index));
             }
+            if (HasIndexer && HasCount) {
+                return index < m_enumerator.Count ? m_enumerator[index:index] : default;
+            }
             foreach (var element in this) {
                 if (index-- == 0) {
                     return element;
@@ -178,7 +197,12 @@ namespace Relinq {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        public TSource First () => First(predicate:(value) => true);
+        public TSource First () {
+            if (HasIndexer && HasCount) {
+                return m_enumerator.Count > 0 ? m_enumerator[index:0] : throw new InvalidOperationException();
+            }
+            return First(predicate:(value) => true);
+        }
 
         //--------------------------------------------------------------------------------------------------------------
         public TSource First (Func<TSource, bool> predicate) {
@@ -192,7 +216,12 @@ namespace Relinq {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        public TSource FirstOrDefault () => FirstOrDefault(predicate:(value) => true);
+        public TSource FirstOrDefault () {
+            if (HasIndexer && HasCount) {
+                return m_enumerator.Count > 0 ? m_enumerator[index:0] : default;
+            }
+            return FirstOrDefault(predicate:(value) => true);
+        }
 
         //--------------------------------------------------------------------------------------------------------------
         public TSource FirstOrDefault (Func<TSource, bool> predicate) {
@@ -209,7 +238,15 @@ namespace Relinq {
         public TEnumerator GetEnumerator () => m_enumerator;
 
         //--------------------------------------------------------------------------------------------------------------
-        public TSource Last () => Last(predicate:(value) => true);
+        public TSource Last () {
+            if (HasIndexer && HasCount) {
+                return m_enumerator.Count > 0 ? 
+                    m_enumerator[index:m_enumerator.Count - 1] : 
+                    throw new InvalidOperationException()
+                ;
+            }
+            return Last(predicate:(value) => true);
+        }
 
         //--------------------------------------------------------------------------------------------------------------
         public TSource Last (Func<TSource, bool> predicate) {
@@ -227,7 +264,12 @@ namespace Relinq {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        public TSource LastOrDefault () => LastOrDefault(predicate:(value) => true);
+        public TSource LastOrDefault () {
+            if (HasIndexer && HasCount) {
+                return m_enumerator.Count > 0 ? m_enumerator[index:m_enumerator.Count - 1] : default;
+            }
+            return LastOrDefault(predicate:(value) => true);
+        } 
 
         //--------------------------------------------------------------------------------------------------------------
         public TSource LastOrDefault (Func<TSource, bool> predicate) {

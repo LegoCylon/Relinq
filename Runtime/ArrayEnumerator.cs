@@ -19,9 +19,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        public TSource Current => 
-            m_index > 0 && m_index <= m_array.Length ? m_array[m_index - 1] : throw new InvalidOperationException()
-        ;
+        public int Count => m_array.Length;
+        public TSource Current => this[index:m_index];
+        public bool HasCount => true;
+        public bool HasIndexer => true;
+        public TSource this [int index] => m_array[index];
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
@@ -34,7 +36,7 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         public ArrayEnumerator (TSource[] array) {
             m_array = array;
-            m_index = 0;
+            m_index = -1;
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -42,7 +44,7 @@ namespace Relinq {
 
         //--------------------------------------------------------------------------------------------------------------
         public bool MoveNext () {
-            if (m_index >= m_array.Length) {
+            if (m_index >= (m_array.Length - 1)) {
                 return false;
             }
 
@@ -51,7 +53,7 @@ namespace Relinq {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        public void Reset () => m_index = 0;
+        public void Reset () => m_index = -1;
     }
     
 }

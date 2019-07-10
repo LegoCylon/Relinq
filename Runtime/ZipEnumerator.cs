@@ -21,7 +21,11 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => Math.Min(m_first.Count, m_second.Count);
         public TResult Current => m_resultSelector(arg1:m_first.Current, arg2:m_second.Current);
+        public bool HasCount => m_first.HasCount && m_second.HasCount;
+        public bool HasIndexer => m_first.HasIndexer && m_second.HasIndexer;
+        public TResult this [int index] => m_resultSelector(arg1:m_first[index:index], arg2:m_second[index:index]);
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables

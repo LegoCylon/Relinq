@@ -19,10 +19,14 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
-        public TSource Current => 
-            m_index > 0 && m_index <= m_count ? 
-                m_generator(arg1:m_start, arg2:m_index - 1) : 
-                throw new InvalidOperationException()
+        public int Count => m_count;
+        public TSource Current => this[index:m_index];
+        public bool HasCount => true;
+        public bool HasIndexer => true;
+        public TSource this [int index] => 
+            index >= 0 && index < m_count ? 
+                m_generator(arg1:m_start, arg2:index) : 
+                throw new ArgumentOutOfRangeException(paramName:nameof(index))
         ;
 
         //--------------------------------------------------------------------------------------------------------------
@@ -55,7 +59,7 @@ namespace Relinq {
             m_start = start;
             m_count = count;
             m_generator = generator ?? throw new ArgumentNullException(paramName:nameof(generator));
-            m_index = 0;
+            m_index = -1;
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -63,7 +67,7 @@ namespace Relinq {
         
         //--------------------------------------------------------------------------------------------------------------
         public bool MoveNext () {
-            if (m_index >= m_count) {
+            if (m_index >= (m_count - 1)) {
                 return false;
             }
 
@@ -72,7 +76,7 @@ namespace Relinq {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        public void Reset () => m_index = 0;
+        public void Reset () => m_index = -1;
     }
     
 }

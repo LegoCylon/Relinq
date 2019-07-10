@@ -21,11 +21,16 @@ namespace Relinq {
         //--------------------------------------------------------------------------------------------------------------
         //  Properties
         //--------------------------------------------------------------------------------------------------------------
+        public int Count => m_enumerator.Count;
         public TSource Current => 
             m_equalityComparer.Equals(x:m_enumerator.Current, y:m_replaceWhat) ? 
             m_replaceWith : 
             m_enumerator.Current
         ;
+
+        public bool HasCount => m_enumerator.HasCount;
+        public bool HasIndexer => m_enumerator.HasIndexer;
+        public TSource this [int index] => m_enumerator[index:index];
 
         //--------------------------------------------------------------------------------------------------------------
         //  Variables
