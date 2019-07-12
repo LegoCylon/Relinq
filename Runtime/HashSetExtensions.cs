@@ -22,6 +22,18 @@ namespace Relinq {
         ) => new EnumerableAdapter<HashSetEnumerator<TSource>, TSource>(
             enumerator:new HashSetEnumerator<TSource>(hashSet:hashSet)
         );
+
+        //--------------------------------------------------------------------------------------------------------------
+        public static void AddRange<TEnumerator, TSource> (
+            this HashSet<TSource> hashSet,
+            EnumerableAdapter<TEnumerator, TSource> enumerable
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
+            foreach (var element in enumerable) {
+                hashSet.Add(item:element);
+            }
+        }
     }
     
 }
