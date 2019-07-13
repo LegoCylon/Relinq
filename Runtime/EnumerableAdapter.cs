@@ -169,8 +169,12 @@ namespace Relinq {
             if (index < 0) {
                 throw new ArgumentOutOfRangeException(paramName:nameof(index));
             }
-            if (HasIndexer) {
-                return m_enumerator[index:index];
+            if (HasIndexer && HasCount) {
+                return 
+                    index < m_enumerator.Count ? 
+                    m_enumerator[index:index] : 
+                    throw new ArgumentOutOfRangeException(paramName:nameof(index))
+                ;
             }
             foreach (var element in this) {
                 if (index-- == 0) {
