@@ -1981,88 +1981,130 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Select () {
+            Func<int, float> selectTo = (value) => (float)value;
+            Func<float, int> selectFrom = (value) => (int)value;
+            Func<int, int, float> selectToIndexed = (value, index) => (float)(value + index);
+            Func<float, int, int> selectFromIndexed = (value, index) => (int)(value - index);
+            
             Select(
                 empty:s_emptyArray.AsEnumerable(),
                 repeat:s_repeatArray.AsEnumerable(),
-                sequence:s_sequenceArray.AsEnumerable()
+                sequence:s_sequenceArray.AsEnumerable(),
+                selectTo:selectTo,
+                selectFrom:selectFrom,
+                selectToIndexed:selectToIndexed,
+                selectFromIndexed:selectFromIndexed
             );
             Select(
                 empty:s_emptyHashSet.AsEnumerable(),
                 repeat:s_repeatHashSet.AsEnumerable(),
-                sequence:s_sequenceHashSet.AsEnumerable()
+                sequence:s_sequenceHashSet.AsEnumerable(),
+                selectTo:selectTo,
+                selectFrom:selectFrom,
+                selectToIndexed:selectToIndexed,
+                selectFromIndexed:selectFromIndexed
             );
             Select(
                 empty:s_emptyIList.AsEnumerable(),
                 repeat:s_repeatIList.AsEnumerable(),
-                sequence:s_sequenceIList.AsEnumerable()
+                sequence:s_sequenceIList.AsEnumerable(),
+                selectTo:selectTo,
+                selectFrom:selectFrom,
+                selectToIndexed:selectToIndexed,
+                selectFromIndexed:selectFromIndexed
             );
             Select(
                 empty:s_emptyIReadOnlyList.AsEnumerable(),
                 repeat:s_repeatIReadOnlyList.AsEnumerable(),
-                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                selectTo:selectTo,
+                selectFrom:selectFrom,
+                selectToIndexed:selectToIndexed,
+                selectFromIndexed:selectFromIndexed
             );
             Select(
                 empty:s_emptyLinkedList.AsEnumerable(),
                 repeat:s_repeatLinkedList.AsEnumerable(),
-                sequence:s_sequenceLinkedList.AsEnumerable()
+                sequence:s_sequenceLinkedList.AsEnumerable(),
+                selectTo:selectTo,
+                selectFrom:selectFrom,
+                selectToIndexed:selectToIndexed,
+                selectFromIndexed:selectFromIndexed
             );
             Select(
                 empty:s_emptyList.AsEnumerable(),
                 repeat:s_repeatList.AsEnumerable(),
-                sequence:s_sequenceList.AsEnumerable()
+                sequence:s_sequenceList.AsEnumerable(),
+                selectTo:selectTo,
+                selectFrom:selectFrom,
+                selectToIndexed:selectToIndexed,
+                selectFromIndexed:selectFromIndexed
             );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Select<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void Select<TEnumerator, TSource, TResult> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, TResult> selectTo,
+            Func<TResult, TSource> selectFrom,
+            Func<TSource, int, TResult> selectToIndexed,
+            Func<TResult, int, TSource> selectFromIndexed
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(
-                code:() => Select<TEnumerator, float>(
+                code:() => Select<TEnumerator, TSource, TResult>(
                     source:empty, 
                     selectTo:(value) => throw new InvalidOperationException(), 
                     selectFrom:(value) => throw new InvalidOperationException()
                 )
             );
             TestNoGC(
-                code:() => Select<TEnumerator, float>(
+                code:() => Select<TEnumerator, TSource, TResult>(
+                    source:empty, 
+                    selectTo:(value, index) => throw new InvalidOperationException(), 
+                    selectFrom:(value, index) => throw new InvalidOperationException()
+                )
+            );
+            TestNoGC(
+                code:() => Select<TEnumerator, TSource, TResult>(
                     source:repeat, 
-                    selectTo:(value) => (float)value, selectFrom:(value) => (int)value
+                    selectTo:selectTo, 
+                    selectFrom:selectFrom
                 )
             );
             TestNoGC(
-                code:() => Select<TEnumerator, float>(
+                code:() => Select<TEnumerator, TSource, TResult>(
                     source:repeat, 
-                    selectTo:(value, index) => (float)value, 
-                    selectFrom:(value, index) => (int)value
+                    selectTo:selectToIndexed, 
+                    selectFrom:selectFromIndexed
                 )
             );
             TestNoGC(
-                code:() => Select<TEnumerator, float>(
+                code:() => Select<TEnumerator, TSource, TResult>(
                     source:sequence, 
-                    selectTo:(value) => (float)value, selectFrom:(value) => (int)value
+                    selectTo:selectTo, 
+                    selectFrom:selectFrom
                 )
             );
             TestNoGC(
-                code:() => Select<TEnumerator, float>(
+                code:() => Select<TEnumerator, TSource, TResult>(
                     source:sequence, 
-                    selectTo:(value, index) => (float)value, 
-                    selectFrom:(value, index) => (int)value
+                    selectTo:selectToIndexed, 
+                    selectFrom:selectFromIndexed
                 )
             );
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Select<TEnumerator, TResult> (
-            EnumerableAdapter<TEnumerator, int> source, 
-            Func<int, TResult> selectTo, 
-            Func<TResult, int> selectFrom
+        private static void Select<TEnumerator, TSource, TResult> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, TResult> selectTo, 
+            Func<TResult, TSource> selectFrom
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
@@ -2078,12 +2120,12 @@ namespace Tests.EditMode {
         
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Select<TEnumerator, TResult> (
-            EnumerableAdapter<TEnumerator, int> source, 
-            Func<int, int, TResult> selectTo, 
-            Func<TResult, int, int> selectFrom
+        private static void Select<TEnumerator, TSource, TResult> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, int, TResult> selectTo, 
+            Func<TResult, int, TSource> selectFrom
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
@@ -2249,12 +2291,12 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SequenceEqual<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void SequenceEqual<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:repeat));
             TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:sequence));
@@ -2265,12 +2307,12 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SequenceEqual<TEnumerator> (
+        private static void SequenceEqual<TEnumerator, TSource> (
             bool expected, 
-            EnumerableAdapter<TEnumerator, int> first, 
-            EnumerableAdapter<TEnumerator, int> second
+            EnumerableAdapter<TEnumerator, TSource> first, 
+            EnumerableAdapter<TEnumerator, TSource> second
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             // ReSharper disable once JoinDeclarationAndInitializer
             bool result;
@@ -2278,19 +2320,19 @@ namespace Tests.EditMode {
             result = first.SequenceEqual(second:first);
             AssertAreEqual(expected:true, actual:result);
 
-            result = first.SequenceEqual(second:first, comparer:EqualityComparer<int>.Default);
+            result = first.SequenceEqual(second:first, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:true, actual:result);
 
             result = second.SequenceEqual(second:second);
             AssertAreEqual(expected:true, actual:result);
 
-            result = second.SequenceEqual(second:second, comparer:EqualityComparer<int>.Default);
+            result = second.SequenceEqual(second:second, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:true, actual:result);
 
             result = first.SequenceEqual(second:second);
             AssertAreEqual(expected:expected, actual:result);
 
-            result = first.SequenceEqual(second:second, comparer:EqualityComparer<int>.Default);
+            result = first.SequenceEqual(second:second, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:expected, actual:result);
         }
         
