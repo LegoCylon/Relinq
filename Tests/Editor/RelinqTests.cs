@@ -2451,93 +2451,159 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Skip () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
+            Skip(
+                empty:s_emptyArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Skip(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Skip(
+                empty:s_emptyIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Skip(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Skip(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Skip(
+                empty:s_emptyList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Skip<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             TestNoGC(code:() => Skip(source:empty, count:0, skipped:0, remaining:0));
             TestNoGC(code:() => Skip(source:empty, count:1, skipped:0, remaining:0));
             TestNoGC(code:() => Skip(source:empty, count:10, skipped:0, remaining:0));
-            TestNoGC(code:() => Skip(source:same, count:0, skipped:0, remaining:3));
-            TestNoGC(code:() => Skip(source:same, count:1, skipped:1, remaining:2));
-            TestNoGC(code:() => Skip(source:same, count:10, skipped:3, remaining:0));
-            TestNoGC(code:() => Skip(source:diff, count:0, skipped:0, remaining:3));
-            TestNoGC(code:() => Skip(source:diff, count:1, skipped:1, remaining:2));
-            TestNoGC(code:() => Skip(source:diff, count:10, skipped:3, remaining:0));
+            TestNoGC(code:() => Skip(source:sequence, count:0, skipped:0, remaining:5));
+            TestNoGC(code:() => Skip(source:sequence, count:1, skipped:1, remaining:4));
+            TestNoGC(code:() => Skip(source:sequence, count:10, skipped:5, remaining:0));
         }
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        private static void Skip<TSource> (
-            List<TSource> source, 
+        private static void Skip<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
             int count, 
             int skipped, 
             int remaining
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             var visited = 0;
-            foreach (var result in enumerable.Skip(count:count)) {
-                AssertAreEqual(expected:source[index:count + visited], actual:result);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                for (var i = 0; i < count && enumerator.MoveNext(); ++i) { }
+                foreach (var result in source.Skip(count:count)) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:result);
+                    ++visited;
+                }
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
             }
-            AssertAreEqual(expected:skipped, actual:source.Count - visited);
+            AssertAreEqual(expected:skipped, actual:source.Count() - visited);
             AssertAreEqual(expected:remaining, actual:visited);
         }
         
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void SkipWhile () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
-            SkipWhile(source:empty, count:0, skipped:0, remaining:0);
-            SkipWhile(source:empty, count:1, skipped:0, remaining:0);
-            SkipWhile(source:empty, count:10, skipped:0, remaining:0);
-            SkipWhile(source:same, count:0, skipped:0, remaining:3);
-            SkipWhile(source:same, count:1, skipped:1, remaining:2);
-            SkipWhile(source:same, count:10, skipped:3, remaining:0);
-            SkipWhile(source:diff, count:0, skipped:0, remaining:3);
-            SkipWhile(source:diff, count:1, skipped:1, remaining:2);
-            SkipWhile(source:diff, count:10, skipped:3, remaining:0);
+            SkipWhile(
+                empty:s_emptyArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            SkipWhile(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            SkipWhile(
+                empty:s_emptyIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            SkipWhile(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            SkipWhile(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            SkipWhile(
+                empty:s_emptyList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void SkipWhile<TSource> (
-            List<TSource> source, 
-            int count, 
-            int skipped, 
+        private static void SkipWhile<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
+            SkipWhile(source:empty, count:0, skipped:0, remaining:0);
+            SkipWhile(source:empty, count:1, skipped:0, remaining:0);
+            SkipWhile(source:empty, count:10, skipped:0, remaining:0);
+            SkipWhile(source:sequence, count:0, skipped:0, remaining:5);
+            SkipWhile(source:sequence, count:1, skipped:1, remaining:4);
+            SkipWhile(source:sequence, count:10, skipped:5, remaining:0);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void SkipWhile<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source,
+            int count,
+            int skipped,
             int remaining
-        ) {
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             //  Using a lambda rather than a local function allows us to capture outside of the Validate.
             // ReSharper disable once ConvertToLocalFunction
             // ReSharper disable once ImplicitlyCapturedClosure
             Func<TSource, int, bool> predicate = (value, index) => index < count;
             TestNoGC(
                 code:() => SkipWhile(
-                    source:source,
-                    count:count,
-                    skipped:skipped,
-                    remaining:remaining,
+                    source:source, 
+                    count:count, 
+                    skipped:skipped, 
+                    remaining:remaining, 
                     predicate:predicate
                 )
             );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SkipWhile<TSource> (
-            List<TSource> source,
+        private static void SkipWhile<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source,
             int count,
             int skipped,
             int remaining,
             Func<TSource, int, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             var visited = 0;
-            foreach (var result in enumerable.SkipWhile(predicate:predicate)) {
-                AssertAreEqual(expected:source[index:count + visited], actual:result);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                for (var i = 0; enumerator.MoveNext() && predicate(arg1:enumerator.Current, arg2:i); ++i) { }
+                foreach (var result in source.SkipWhile(predicate:predicate)) {
+                    AssertAreEqual(expected:enumerator.Current, actual:result);
+                    enumerator.MoveNext();
+                    ++visited;
+                }
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
             }
-            AssertAreEqual(expected:skipped, actual:source.Count - visited);
+            AssertAreEqual(expected:skipped, actual:source.Count() - visited);
             AssertAreEqual(expected:remaining, actual:visited);
         }
 
