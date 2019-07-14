@@ -2339,91 +2339,115 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Single () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
+            Func<int, bool> sequenceHas = (value) => value == 0;
+            Single(
+                empty:s_emptyArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            Single(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            Single(
+                empty:s_emptyIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            Single(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            Single(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            Single(
+                empty:s_emptyList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+        }
 
-            Assert.Throws<InvalidOperationException>(code:() => Single(source:empty, expected:0));
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Single<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> sequenceHas
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
+            Assert.Throws<InvalidOperationException>(code:() => empty.Single());
             Assert.Throws<InvalidOperationException>(
-                code:() => Single(
-                    source:empty, 
-                    expected:0, 
+                code:() => empty.Single(
                     //  Wrap this invalid exception with an aggregate because it's not the expected throw
                     //
                     predicate:(value) => throw new AggregateException(new InvalidOperationException())
                 )
             );
-            Assert.Throws<InvalidOperationException>(code:() => Single(source:same, expected:0));
-            Assert.Throws<InvalidOperationException>(
-                code:() => Single(source:same, expected:0, predicate:(value) => value == 1)
-            );
-            Assert.Throws<InvalidOperationException>(code:() => Single(source:diff, expected:0));
-            TestNoGC(code:() => Single(expected:2, source:diff, predicate:(value) => value == 2));
-        }
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private static void Single<TSource> (List<TSource> source, TSource expected) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.Single();
-            AssertAreEqual(expected:expected, actual:result);
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-        private static void Single<TSource> (
-            List<TSource> source, 
-            TSource expected, 
-            Func<TSource, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.Single(predicate:predicate);
-            AssertAreEqual(expected:expected, actual:result);
+            Assert.Throws<InvalidOperationException>(code:() => sequence.Single());
+            TestNoGC(code:() => sequence.Single(predicate:sequenceHas));
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void SingleOrDefault () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
+            Func<int, bool> sequenceHas = (value) => value == 0;
+            SingleOrDefault(
+                empty:s_emptyArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            SingleOrDefault(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            SingleOrDefault(
+                empty:s_emptyIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            SingleOrDefault(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            SingleOrDefault(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+            SingleOrDefault(
+                empty:s_emptyList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable(),
+                sequenceHas:sequenceHas
+            );
+        }
 
-            TestNoGC(code:() => SingleOrDefault(source:empty, expected:default));
+        //--------------------------------------------------------------------------------------------------------------
+        private static void SingleOrDefault<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> sequenceHas
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
+            TestNoGC(code:() => empty.SingleOrDefault());
             TestNoGC(
-                code:() => SingleOrDefault(
-                    source:empty, 
-                    expected:default, 
-                    predicate:(value) => throw new InvalidOperationException()
+                code:() => empty.SingleOrDefault(
+                    //  Wrap this invalid exception with an aggregate because it's not the expected throw
+                    //
+                    predicate:(value) => throw new AggregateException(new InvalidOperationException())
                 )
             );
-            Assert.Throws<InvalidOperationException>(code:() => SingleOrDefault(source:same, expected:0));
-            Assert.Throws<InvalidOperationException>(
-                code:() => SingleOrDefault(source:same, expected:0, predicate:(value) => value == 0)
-            );
-            TestNoGC(code:() => SingleOrDefault(source:same, expected:default, predicate:(value) => value == 1));
-            Assert.Throws<InvalidOperationException>(code:() => SingleOrDefault(source:diff, expected:0));
-            Assert.Throws<InvalidOperationException>(
-                code:() => SingleOrDefault(source:diff, expected:0, predicate:(value) => value < 2)
-            );
-            TestNoGC(code:() => SingleOrDefault(source:diff, expected:2, predicate:(value) => value == 2));
+            Assert.Throws<InvalidOperationException>(code:() => sequence.SingleOrDefault());
+            TestNoGC(code:() => sequence.SingleOrDefault(predicate:sequenceHas));
         }
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private static void SingleOrDefault<TSource> (List<TSource> source, TSource expected) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.SingleOrDefault();
-            AssertAreEqual(expected:expected, actual:result);
-        }
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private static void SingleOrDefault<TSource> (
-            List<TSource> source, 
-            TSource expected, 
-            Func<TSource, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.SingleOrDefault(predicate:predicate);
-            AssertAreEqual(expected:expected, actual:result);
-        }
-        
+
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Skip () {
