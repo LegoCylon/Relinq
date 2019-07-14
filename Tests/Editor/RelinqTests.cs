@@ -1917,33 +1917,75 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Select () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
+            Select(
+                empty:s_emptyArray.AsEnumerable(),
+                repeat:s_repeatArray.AsEnumerable(),
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Select(
+                empty:s_emptyHashSet.AsEnumerable(),
+                repeat:s_repeatHashSet.AsEnumerable(),
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Select(
+                empty:s_emptyIList.AsEnumerable(),
+                repeat:s_repeatIList.AsEnumerable(),
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Select(
+                empty:s_emptyIReadOnlyList.AsEnumerable(),
+                repeat:s_repeatIReadOnlyList.AsEnumerable(),
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Select(
+                empty:s_emptyLinkedList.AsEnumerable(),
+                repeat:s_repeatLinkedList.AsEnumerable(),
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Select(
+                empty:s_emptyList.AsEnumerable(),
+                repeat:s_repeatList.AsEnumerable(),
+                sequence:s_sequenceList.AsEnumerable()
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Select<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             TestNoGC(
-                code:() => Select<int, float>(
+                code:() => Select<TEnumerator, float>(
                     source:empty, 
                     selectTo:(value) => throw new InvalidOperationException(), 
                     selectFrom:(value) => throw new InvalidOperationException()
                 )
             );
             TestNoGC(
-                code:() => Select(source:same, selectTo:(value) => (float)value, selectFrom:(value) => (int)value)
+                code:() => Select<TEnumerator, float>(
+                    source:repeat, 
+                    selectTo:(value) => (float)value, selectFrom:(value) => (int)value
+                )
             );
             TestNoGC(
-                code:() => Select(
-                    source:same, 
+                code:() => Select<TEnumerator, float>(
+                    source:repeat, 
                     selectTo:(value, index) => (float)value, 
                     selectFrom:(value, index) => (int)value
                 )
             );
             TestNoGC(
-                code:() => Select(source:diff, selectTo:(value) => (float)value, selectFrom:(value) => (int)value)
+                code:() => Select<TEnumerator, float>(
+                    source:sequence, 
+                    selectTo:(value) => (float)value, selectFrom:(value) => (int)value
+                )
             );
             TestNoGC(
-                code:() => Select(
-                    source:diff, 
+                code:() => Select<TEnumerator, float>(
+                    source:sequence, 
                     selectTo:(value, index) => (float)value, 
                     selectFrom:(value, index) => (int)value
                 )
@@ -1951,35 +1993,46 @@ namespace Tests.EditMode {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Select<TSource, TResult> (
-            List<TSource> source, 
-            Func<TSource, TResult> selectTo, 
-            Func<TResult, TSource> selectFrom
-        ) {
-            var enumerable = source.AsEnumerable();
+        private static void Select<TEnumerator, TResult> (
+            EnumerableAdapter<TEnumerator, int> source, 
+            Func<int, TResult> selectTo, 
+            Func<TResult, int> selectFrom
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             var visited = 0;
-            foreach (var result in enumerable.Select(selector:selectTo).Select(selector:selectFrom)) {
-                AssertAreEqual(expected:source[index:visited], actual:result);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var result in source.Select(selector:selectTo).Select(selector:selectFrom)) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:result);
+                    ++visited;
+                }
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
             }
-            AssertAreEqual(expected:source.Count, actual:visited);
+            AssertAreEqual(expected:source.Count(), actual:visited);
         }
         
+        
         //--------------------------------------------------------------------------------------------------------------
-        private static void Select<TSource, TResult> (
-            List<TSource> source, 
-            Func<TSource, int, TResult> selectTo, 
-            Func<TResult, int, TSource> selectFrom
-        ) {
-            var enumerable = source.AsEnumerable();
+        private static void Select<TEnumerator, TResult> (
+            EnumerableAdapter<TEnumerator, int> source, 
+            Func<int, int, TResult> selectTo, 
+            Func<TResult, int, int> selectFrom
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             var visited = 0;
-            foreach (var result in enumerable.Select(selector:selectTo).Select(selector:selectFrom)) {
-                AssertAreEqual(expected:source[index:visited], actual:result);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var result in source.Select(selector:selectTo).Select(selector:selectFrom)) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:result);
+                    ++visited;
+                }
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
             }
-            AssertAreEqual(expected:source.Count, actual:visited);
+            AssertAreEqual(expected:source.Count(), actual:visited);
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void SelectMany () {
@@ -2099,49 +2152,81 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void SequenceEqual () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            var also = new List<int>(collection:new[] { 0, 1, 2 });
-            
-            TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:same));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:diff));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:also));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:same, second:empty));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:same, second:diff));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:same, second:also));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:diff, second:empty));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:diff, second:same));
-            TestNoGC(code:() => SequenceEqual(expected:true, first:diff, second:also));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:also, second:empty));
-            TestNoGC(code:() => SequenceEqual(expected:false, first:also, second:same));
-            TestNoGC(code:() => SequenceEqual(expected:true, first:also, second:diff));
+            SequenceEqual(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            SequenceEqual(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            SequenceEqual(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            SequenceEqual(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            SequenceEqual(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            SequenceEqual(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SequenceEqual<TSource> (bool expected, List<TSource> first, List<TSource> second) {
-            var firstAdapter = first.AsEnumerable();
-            var secondAdapter = second.AsEnumerable();
-            
+        private static void SequenceEqual<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:repeat));
+            TestNoGC(code:() => SequenceEqual(expected:false, first:empty, second:sequence));
+            TestNoGC(code:() => SequenceEqual(expected:false, first:repeat, second:empty));
+            TestNoGC(code:() => SequenceEqual(expected:false, first:repeat, second:sequence));
+            TestNoGC(code:() => SequenceEqual(expected:false, first:sequence, second:empty));
+            TestNoGC(code:() => SequenceEqual(expected:false, first:sequence, second:repeat));
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void SequenceEqual<TEnumerator> (
+            bool expected, 
+            EnumerableAdapter<TEnumerator, int> first, 
+            EnumerableAdapter<TEnumerator, int> second
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             // ReSharper disable once JoinDeclarationAndInitializer
             bool result;
 
-            result = firstAdapter.SequenceEqual(second:firstAdapter);
+            result = first.SequenceEqual(second:first);
             AssertAreEqual(expected:true, actual:result);
 
-            result = firstAdapter.SequenceEqual(second:firstAdapter, comparer:EqualityComparer<TSource>.Default);
+            result = first.SequenceEqual(second:first, comparer:EqualityComparer<int>.Default);
             AssertAreEqual(expected:true, actual:result);
 
-            result = secondAdapter.SequenceEqual(second:secondAdapter);
+            result = second.SequenceEqual(second:second);
             AssertAreEqual(expected:true, actual:result);
 
-            result = secondAdapter.SequenceEqual(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
+            result = second.SequenceEqual(second:second, comparer:EqualityComparer<int>.Default);
             AssertAreEqual(expected:true, actual:result);
 
-            result = firstAdapter.SequenceEqual(second:secondAdapter);
+            result = first.SequenceEqual(second:second);
             AssertAreEqual(expected:expected, actual:result);
 
-            result = firstAdapter.SequenceEqual(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
+            result = first.SequenceEqual(second:second, comparer:EqualityComparer<int>.Default);
             AssertAreEqual(expected:expected, actual:result);
         }
         
