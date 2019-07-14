@@ -2792,10 +2792,93 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Where () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
+            Func<int, bool> repeatHas = (value) => value == 1;
+            Func<int, int, bool> repeatHasIndexed = (value, index) => value == 1;
+            Func<int, bool> sequenceHas = (value) => value == 1;
+            Func<int, int, bool> sequenceHasIndexed = (value, index) => value == 1;
+
+            Where(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                repeatCount:5, 
+                repeatHas:repeatHas, 
+                repeatHasIndexed:repeatHasIndexed, 
+                sequence:s_sequenceArray.AsEnumerable(),
+                sequenceCount:1,
+                sequenceHas:sequenceHas,
+                sequenceHasIndexed:sequenceHasIndexed
+            );
+            Where(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                repeatCount:1, 
+                repeatHas:repeatHas, 
+                repeatHasIndexed:repeatHasIndexed, 
+                sequence:s_sequenceHashSet.AsEnumerable(),
+                sequenceCount:1,
+                sequenceHas:sequenceHas,
+                sequenceHasIndexed:sequenceHasIndexed
+            );
+            Where(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                repeatCount:5, 
+                repeatHas:repeatHas, 
+                repeatHasIndexed:repeatHasIndexed, 
+                sequence:s_sequenceIList.AsEnumerable(),
+                sequenceCount:1,
+                sequenceHas:sequenceHas,
+                sequenceHasIndexed:sequenceHasIndexed
+            );
+            Where(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                repeatCount:5, 
+                repeatHas:repeatHas, 
+                repeatHasIndexed:repeatHasIndexed, 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                sequenceCount:1,
+                sequenceHas:sequenceHas,
+                sequenceHasIndexed:sequenceHasIndexed
+            );
+            Where(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                repeatCount:5, 
+                repeatHas:repeatHas, 
+                repeatHasIndexed:repeatHasIndexed, 
+                sequence:s_sequenceLinkedList.AsEnumerable(),
+                sequenceCount:1,
+                sequenceHas:sequenceHas,
+                sequenceHasIndexed:sequenceHasIndexed
+            );
+            Where(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                repeatCount:5, 
+                repeatHas:repeatHas, 
+                repeatHasIndexed:repeatHasIndexed, 
+                sequence:s_sequenceList.AsEnumerable(),
+                sequenceCount:1,
+                sequenceHas:sequenceHas,
+                sequenceHasIndexed:sequenceHasIndexed
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Where<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            int repeatCount,
+            Func<TSource, bool> repeatHas,
+            Func<TSource, int, bool> repeatHasIndexed,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            int sequenceCount,
+            Func<TSource, bool> sequenceHas,
+            Func<TSource, int, bool> sequenceHasIndexed
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             TestNoGC(
                 code:() => Where(source:empty, predicate:(value) => throw new InvalidOperationException(), expected:0)
             );
@@ -2807,34 +2890,44 @@ namespace Tests.EditMode {
                 )
             );
             TestNoGC(
-                code:() => Where(source:same, predicate:(value) => value == 0, expected:3)
+                code:() => Where(source:repeat, predicate:repeatHas, expected:repeatCount)
             );
             TestNoGC(
-                code:() => Where(source:same, predicate:(value, index) => value == 0, expected:3)
+                code:() => Where(source:repeat, predicate:repeatHasIndexed, expected:repeatCount)
             );
             TestNoGC(
-                code:() => Where(source:diff, predicate:(value) => value == 0, expected:1)
+                code:() => Where(source:sequence, predicate:sequenceHas, expected:sequenceCount)
             );
             TestNoGC(
-                code:() => Where(source:diff, predicate:(value, index) => value == 0, expected:1)
+                code:() => Where(source:sequence, predicate:sequenceHasIndexed, expected:sequenceCount)
             );
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
-        private static void Where<TSource> (List<TSource> source, Func<TSource, bool> predicate, int expected) {
-            var enumerable = source.AsEnumerable();
+        private static void Where<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, bool> predicate, 
+            int expected
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             var visited = 0;
-            foreach (var _ in enumerable.Where(predicate:predicate)) {
+            foreach (var _ in source.Where(predicate:predicate)) {
                 ++visited;
             }
             AssertAreEqual(expected:visited, actual:expected);
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Where<TSource> (List<TSource> source, Func<TSource, int, bool> predicate, int expected) {
-            var enumerable = source.AsEnumerable();
+        private static void Where<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, int, bool> predicate, 
+            int expected
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             var visited = 0;
-            foreach (var _ in enumerable.Where(predicate:predicate)) {
+            foreach (var _ in source.Where(predicate:predicate)) {
                 ++visited;
             }
             AssertAreEqual(expected:visited, actual:expected);
