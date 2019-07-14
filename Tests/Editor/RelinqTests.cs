@@ -919,96 +919,177 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void First () {
-            var empty = new List<int>();
-            var zero = new List<int>(collection:new[] { 0, 1, 2 });
-            var one = new List<int>(collection:new[] { 1, 2, 3 });
-            var two = new List<int>(collection:new[] { 2, 3, 4 });
+            First(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            First(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            First(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            First(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            First(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            First(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+        }
 
-            Assert.Throws<InvalidOperationException>(code:() => First(source:empty, expected:0));
+        //--------------------------------------------------------------------------------------------------------------
+        private static void First<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence,
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            Assert.Throws<InvalidOperationException>(code:() => First(source:empty, predicate:predicate));
             Assert.Throws<InvalidOperationException>(
                 code:() => First(
                     source:empty, 
-                    expected:0, 
-                    //  Wrap this invalid exception with an aggregate because it's not the expected throw
-                    //
                     predicate:(value) => throw new AggregateException(new InvalidOperationException())
                 )
             );
-            TestNoGC(code:() => First(source:zero, expected:0));
-            TestNoGC(code:() => First(source:zero, expected:0, predicate:(value) => value == 0));
+            TestNoGC(code:() => First(source:repeat, predicate:predicate));
+            TestNoGC(code:() => First(source:repeat, predicate:(value) => true));
             Assert.Throws<InvalidOperationException>(
-                code:() => First(source:zero, expected:0, predicate:(value) => false)
+                code:() => First(source:repeat, predicate:(value) => false)
             );
-            TestNoGC(code:() => First(source:one, expected:1));
-            TestNoGC(code:() => First(source:one, expected:1, predicate:(value) => value > 0));
-            Assert.Throws<InvalidOperationException>(
-                code:() => First(source:one, expected:1, predicate:(value) => false)
-            );
-            TestNoGC(code:() => First(source:two, expected:2));
-            TestNoGC(code:() => First(source:two, expected:2, predicate:(value) => value < 5));
-            Assert.Throws<InvalidOperationException>(
-                code:() => First(source:two, expected:2, predicate:(value) => false)
-            );
+            TestNoGC(code:() => First(source:sequence, predicate:predicate));
+            TestNoGC(code:() => First(source:sequence, predicate:(value) => true));
+            Assert.Throws<InvalidOperationException>(code:() => First(source:sequence, predicate:(value) => false));
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
-        private static void First<TSource> (List<TSource> source, TSource expected) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.First();
-            AssertAreEqual(expected:expected, actual:result);
-        }
+        private static void First<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> source, 
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            using (var enumerator = source.GetEnumerator()) {
+                var result = source.First(predicate:predicate);
+                while (enumerator.MoveNext()) {
+                    var expected = enumerator.Current;
+                    if (!predicate(arg:expected)) {
+                        continue;
+                    }
 
-        //--------------------------------------------------------------------------------------------------------------
-        private static void First<TSource> (List<TSource> source, TSource expected, Func<TSource, bool> predicate) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.First(predicate:predicate);
-            AssertAreEqual(expected:expected, actual:result);
+                    AssertAreEqual(expected:expected, actual:result);
+                    return;
+                }
+                AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+            }
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void FirstOrDefault () {
-            var empty = new List<int>();
-            var zero = new List<int>(collection:new[] { 0, 1, 2 });
-            var one = new List<int>(collection:new[] { 1, 2, 3 });
-            var two = new List<int>(collection:new[] { 2, 3, 4 });
+            FirstOrDefault(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            FirstOrDefault(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            FirstOrDefault(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            FirstOrDefault(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            FirstOrDefault(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            FirstOrDefault(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+        }
 
-            TestNoGC(code:() => FirstOrDefault(source:empty, expected:default));
+        //--------------------------------------------------------------------------------------------------------------
+        private static void FirstOrDefault<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence,
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            TestNoGC(code:() => FirstOrDefault(source:empty, predicate:predicate));
             TestNoGC(
                 code:() => FirstOrDefault(
                     source:empty, 
-                    expected:default, 
-                    predicate:(value) => throw new InvalidProgramException()
+                    predicate:(value) => throw new AggregateException(new InvalidOperationException())
                 )
             );
-            TestNoGC(code:() => FirstOrDefault(source:empty, expected:default));
-            TestNoGC(code:() => FirstOrDefault(source:zero, expected:0));
-            TestNoGC(code:() => FirstOrDefault(source:zero, expected:0, predicate:(value) => value == 0));
-            TestNoGC(code:() => FirstOrDefault(source:zero, expected:default, predicate:(value) => false));
-            TestNoGC(code:() => FirstOrDefault(source:one, expected:1));
-            TestNoGC(code:() => FirstOrDefault(source:one, expected:1, predicate:(value) => value > 0));
-            TestNoGC(code:() => FirstOrDefault(source:one, expected:default, predicate:(value) => false));
-            TestNoGC(code:() => FirstOrDefault(source:two, expected:2));
-            TestNoGC(code:() => FirstOrDefault(source:two, expected:2, predicate:(value) => value < 5));
-            TestNoGC(code:() => FirstOrDefault(source:two, expected:default, predicate:(value) => false));
+            TestNoGC(code:() => FirstOrDefault(source:repeat, predicate:predicate));
+            TestNoGC(code:() => FirstOrDefault(source:repeat, predicate:(value) => true));
+            TestNoGC(code:() => FirstOrDefault(source:repeat, predicate:(value) => false));
+            TestNoGC(code:() => FirstOrDefault(source:sequence, predicate:predicate));
+            TestNoGC(code:() => FirstOrDefault(source:sequence, predicate:(value) => true));
+            TestNoGC(code:() => FirstOrDefault(source:sequence, predicate:(value) => false));
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
-        private static void FirstOrDefault<TSource> (List<TSource> source, TSource expected) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.FirstOrDefault();
-            AssertAreEqual(expected:expected, actual:result);
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-        private static void FirstOrDefault<TSource> (
-            List<TSource> source, 
-            TSource expected,
-            Func<TSource, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.FirstOrDefault(predicate:predicate);
-            AssertAreEqual(expected:expected, actual:result);
+        private static void FirstOrDefault<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> source, 
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            using (var enumerator = source.GetEnumerator()) {
+                var result = source.FirstOrDefault(predicate:predicate);
+                while (enumerator.MoveNext()) {
+                    var expected = enumerator.Current;
+                    if (!predicate(arg:expected)) {
+                        continue;
+                    }
+                    
+                    AssertAreEqual(expected:expected, actual:result);
+                    return;
+                }
+                AssertAreEqual(expected:default, actual:result);
+            }
         }
 
         //--------------------------------------------------------------------------------------------------------------
@@ -1040,11 +1121,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void IList () {
-            var empty = new List<int>();
-            var diff = new List<int> { 0, 1, 2, };
-            
-            TestNoGC(code:() => IList(source:empty));
-            TestNoGC(code:() => IList(source:diff));
+            TestNoGC(code:() => IList(source:s_emptyIList));
+            TestNoGC(code:() => IList(source:s_repeatIList));
+            TestNoGC(code:() => IList(source:s_sequenceIList));
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -1065,11 +1144,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void IReadOnlyList () {
-            var empty = new List<int>();
-            var diff = new List<int> { 0, 1, 2, };
-            
-            TestNoGC(code:() => IReadOnlyList(source:empty));
-            TestNoGC(code:() => IReadOnlyList(source:diff));
+            TestNoGC(code:() => IReadOnlyList(source:s_emptyIReadOnlyList));
+            TestNoGC(code:() => IReadOnlyList(source:s_repeatIReadOnlyList));
+            TestNoGC(code:() => IReadOnlyList(source:s_sequenceIReadOnlyList));
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -1087,112 +1164,192 @@ namespace Tests.EditMode {
             AssertAreEqual(expected:source.Count, actual:visited);
         }
 
+
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Last () {
-            var empty = new List<int>();
-            var zero = new List<int>(collection:new[] { 2, 1, 0 });
-            var one = new List<int>(collection:new[] { 3, 2, 1 });
-            var two = new List<int>(collection:new[] { 4, 3, 2 });
+            Last(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            Last(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            Last(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            Last(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            Last(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            Last(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+        }
 
-            Assert.Throws<InvalidOperationException>(code:() => Last(source:empty, expected:0));
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Last<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence,
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            Assert.Throws<InvalidOperationException>(code:() => Last(source:empty, predicate:predicate));
             Assert.Throws<InvalidOperationException>(
                 code:() => Last(
                     source:empty, 
-                    expected:0, 
-                    //  Wrap this invalid exception with an aggregate because it's not the expected throw
-                    //
-                    predicate:(value) => throw new AggregateException(new InvalidProgramException())
+                    predicate:(value) => throw new AggregateException(new InvalidOperationException())
                 )
             );
-            TestNoGC(code:() => Last(source:zero, expected:0));
-            TestNoGC(code:() => Last(source:zero, expected:0, predicate:(value) => value == 0));
+            TestNoGC(code:() => Last(source:repeat, predicate:predicate));
+            TestNoGC(code:() => Last(source:repeat, predicate:(value) => true));
             Assert.Throws<InvalidOperationException>(
-                code:() => Last(source:zero, expected:default, predicate:(value) => false)
+                code:() => Last(source:repeat, predicate:(value) => false)
             );
-            TestNoGC(code:() => Last(source:one, expected:1));
-            TestNoGC(code:() => Last(source:one, expected:1, predicate:(value) => value > 0));
-            Assert.Throws<InvalidOperationException>(
-                code:() => Last(source:one, expected:default, predicate:(value) => false)
-            );
-            TestNoGC(code:() => Last(source:two, expected:2));
-            TestNoGC(code:() => Last(source:two, expected:2, predicate:(value) => value < 5));
-            Assert.Throws<InvalidOperationException>(
-                code:() => Last(source:two, expected:default, predicate:(value) => false)
-            );
+            TestNoGC(code:() => Last(source:sequence, predicate:predicate));
+            TestNoGC(code:() => Last(source:sequence, predicate:(value) => true));
+            Assert.Throws<InvalidOperationException>(code:() => Last(source:sequence, predicate:(value) => false));
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
-        private static void Last<TSource> (List<TSource> source, TSource expected) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.Last();
-            AssertAreEqual(expected:expected, actual:result);
-        }
+        private static void Last<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> source, 
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            using (var enumerator = source.GetEnumerator()) {
+                var result = source.Last(predicate:predicate);
+                int? last = default;
+                while (enumerator.MoveNext()) {
+                    var expected = enumerator.Current;
+                    if (!predicate(arg:expected)) {
+                        continue;
+                    }
 
-        //--------------------------------------------------------------------------------------------------------------
-        private static void Last<TSource> (
-            List<TSource> source, 
-            TSource expected, 
-            Func<TSource, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.Last(predicate:predicate);
-            AssertAreEqual(expected:expected, actual:result);
+                    last = expected;
+                }
+                AssertAreEqual(expected:true, actual:last.HasValue);
+                AssertAreEqual(expected:last.Value, actual:result);
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
+            }
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void LastOrDefault () {
-            var empty = new List<int>();
-            var zero = new List<int>(collection:new[] { 2, 1, 0 });
-            var one = new List<int>(collection:new[] { 3, 2, 1 });
-            var two = new List<int>(collection:new[] { 4, 3, 2 });
+            LastOrDefault(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            LastOrDefault(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            LastOrDefault(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            LastOrDefault(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            LastOrDefault(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+            LastOrDefault(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable(), 
+                predicate:(value) => value >= 0
+            );
+        }
 
-            TestNoGC(code:() => LastOrDefault(source:empty, expected:default));
+        //--------------------------------------------------------------------------------------------------------------
+        private static void LastOrDefault<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence,
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            TestNoGC(code:() => LastOrDefault(source:empty, predicate:predicate));
             TestNoGC(
                 code:() => LastOrDefault(
                     source:empty, 
-                    expected:default, 
-                    predicate:(value) => throw new InvalidProgramException()
+                    predicate:(value) => throw new AggregateException(new InvalidOperationException())
                 )
             );
-            TestNoGC(code:() => LastOrDefault(source:zero, expected:0));
-            TestNoGC(code:() => LastOrDefault(source:zero, expected:0, predicate:(value) => value == 0));
-            TestNoGC(code:() => LastOrDefault(source:zero, expected:default, predicate:(value) => false));
-            TestNoGC(code:() => LastOrDefault(source:one, expected:1));
-            TestNoGC(code:() => LastOrDefault(source:one, expected:1, predicate:(value) => value > 0));
-            TestNoGC(code:() => LastOrDefault(source:one, expected:default, predicate:(value) => false));
-            TestNoGC(code:() => LastOrDefault(source:two, expected:2));
-            TestNoGC(code:() => LastOrDefault(source:two, expected:2, predicate:(value) => value < 5));
-            TestNoGC(code:() => LastOrDefault(source:two, expected:default, predicate:(value) => false));
+            TestNoGC(code:() => LastOrDefault(source:repeat, predicate:predicate));
+            TestNoGC(code:() => LastOrDefault(source:repeat, predicate:(value) => true));
+            TestNoGC(code:() => LastOrDefault(source:repeat, predicate:(value) => false));
+            TestNoGC(code:() => LastOrDefault(source:sequence, predicate:predicate));
+            TestNoGC(code:() => LastOrDefault(source:sequence, predicate:(value) => true));
+            TestNoGC(code:() => LastOrDefault(source:sequence, predicate:(value) => false));
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
-        private static void LastOrDefault<TSource> (List<TSource> source, TSource expected) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.LastOrDefault();
-            AssertAreEqual(expected:expected, actual:result);
-        }
+        private static void LastOrDefault<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> source, 
+            Func<int, bool> predicate
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            using (var enumerator = source.GetEnumerator()) {
+                var result = source.LastOrDefault(predicate:predicate);
+                int last = default;
+                while (enumerator.MoveNext()) {
+                    var expected = enumerator.Current;
+                    if (!predicate(arg:expected)) {
+                        continue;
+                    }
 
-        //--------------------------------------------------------------------------------------------------------------
-        private static void LastOrDefault<TSource> (
-            List<TSource> source, 
-            TSource expected,
-            Func<TSource, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
-            var result = enumerable.LastOrDefault(predicate:predicate);
-            AssertAreEqual(expected:expected, actual:result);
+                    last = expected;
+                }
+                AssertAreEqual(expected:last, actual:result);
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
+            }
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void LinkedList () {
-            var empty = new LinkedList<int>();
-            var diff = new LinkedList<int> { 0, 1, 2, };
-            
-            TestNoGC(code:() => LinkedList(source:empty));
-            TestNoGC(code:() => LinkedList(source:diff));
+            TestNoGC(code:() => LinkedList(source:s_emptyLinkedList));
+            TestNoGC(code:() => LinkedList(source:s_repeatLinkedList));
+            TestNoGC(code:() => LinkedList(source:s_sequenceLinkedList));
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -1215,11 +1372,9 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void List () {
-            var empty = new List<int>();
-            var diff = new List<int> { 0, 1, 2, };
-            
-            TestNoGC(code:() => List(source:empty));
-            TestNoGC(code:() => List(source:diff));
+            TestNoGC(code:() => List(source:s_emptyList));
+            TestNoGC(code:() => List(source:s_repeatList));
+            TestNoGC(code:() => List(source:s_sequenceList));
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -2161,35 +2316,6 @@ namespace Tests.EditMode {
                 ++visited;
             }
             AssertAreEqual(expected:Math.Min(val1:first.Count, val2:second.Count), actual:visited);
-        }
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private interface IExperiment<out TSource> : IDisposable {
-            TSource Current { get; }
-            bool MoveNext ();
-            void Reset ();
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-        private struct Experiment<TSource> : IExperiment<TSource> {
-            TSource IExperiment<TSource>.Current => default;
-            public void Dispose () { }
-            bool IExperiment<TSource>.MoveNext () => false;
-            void IExperiment<TSource>.Reset () { }
-        }
-
-        //--------------------------------------------------------------------------------------------------------------
-        [Test]
-        public static void ExperimentTest () {
-            TestNoGC(code:() => ExperimentTest<Experiment<int>, int>(experiment:new Experiment<int>()));
-        }
-        
-        //--------------------------------------------------------------------------------------------------------------
-        private static void ExperimentTest<TExperiment, TSource> (TExperiment experiment)
-            where TExperiment : IExperiment<TSource> {
-            using (experiment) {
-                while (experiment.MoveNext()) { }
-            }
         }
     }
     
