@@ -2568,7 +2568,7 @@ namespace Tests.EditMode {
         )
             where TEnumerator : IAdaptableEnumerator<TSource>
         {
-            //  Using a lambda rather than a local function allows us to capture outside of the Validate.
+            //  Using a lambda rather than a local function allows us to capture outside of the TestNoGC.
             // ReSharper disable once ConvertToLocalFunction
             // ReSharper disable once ImplicitlyCapturedClosure
             Func<TSource, int, bool> predicate = (value, index) => index < count;
@@ -2752,7 +2752,7 @@ namespace Tests.EditMode {
         )
             where TEnumerator : IAdaptableEnumerator<TSource>
         {
-            //  Using a lambda rather than a local function allows us to capture outside of the Validate.
+            //  Using a lambda rather than a local function allows us to capture outside of the TestNoGC.
             // ReSharper disable once ConvertToLocalFunction
             // ReSharper disable once ImplicitlyCapturedClosure
             Func<TSource, int, bool> predicate = (value, index) => index < count;
@@ -2936,25 +2936,64 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Zip () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-
-            Zip(first:empty, second:empty);
-            Zip(first:empty, second:same);
-            Zip(first:empty, second:diff);
-            Zip(first:same, second:diff);
-            Zip(first:same, second:empty);
-            Zip(first:diff, second:same);
-            Zip(first:diff, second:empty);
+            Zip(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Zip(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Zip(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Zip(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Zip(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Zip(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Zip<TFirstSource, TSecondSource> (
-            List<TFirstSource> first,
-            List<TSecondSource> second
-        ) {
-            //  Using a lambda rather than a local function allows us to capture outside of the Validate.
+        private static void Zip<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
+            Zip(first:empty, second:empty);
+            Zip(first:empty, second:repeat);
+            Zip(first:empty, second:sequence);
+            Zip(first:repeat, second:sequence);
+            Zip(first:repeat, second:empty);
+            Zip(first:sequence, second:repeat);
+            Zip(first:sequence, second:empty);
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Zip<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource> (
+            EnumerableAdapter<TFirstEnumerator, TFirstSource> first,
+            EnumerableAdapter<TSecondEnumerator, TSecondSource> second
+        )
+            where TFirstEnumerator : IAdaptableEnumerator<TFirstSource>
+            where TSecondEnumerator : IAdaptableEnumerator<TSecondSource>
+        {
+            //  Using a lambda rather than a local function allows us to capture outside of the TestNoGC.
             // ReSharper disable once ConvertToLocalFunction
             Func<TFirstSource, TSecondSource, (TFirstSource, TSecondSource)> resultSelector = (f, s) => (f, s);
             // ReSharper disable once ConvertToLocalFunction
@@ -2968,23 +3007,30 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Zip<TFirstSource, TSecondSource, TResult> (
-            List<TFirstSource> first, 
-            List<TSecondSource> second, 
+        private static void Zip<TFirstEnumerator, TFirstSource, TSecondEnumerator, TSecondSource, TResult> (
+            EnumerableAdapter<TFirstEnumerator, TFirstSource> first, 
+            EnumerableAdapter<TSecondEnumerator, TSecondSource> second, 
             Func<TFirstSource, TSecondSource, TResult> resultSelector,
             Func<TFirstSource, TSecondSource, TResult, bool> resultTester
-        ) {
-            var firstAdapter = first.AsEnumerable();
-            var secondAdapter = second.AsEnumerable();
+        )
+            where TFirstEnumerator : IAdaptableEnumerator<TFirstSource>
+            where TSecondEnumerator : IAdaptableEnumerator<TSecondSource>
+        {
             var visited = 0;
-            foreach (var result in firstAdapter.Zip(second:secondAdapter, resultSelector:resultSelector)) {
-                AssertAreEqual(
-                    expected:true,
-                    actual:resultTester(arg1:first[index:visited], arg2:second[index:visited], arg3:result)
-                );
-                ++visited;
+            using (var firstEnumerator = first.GetEnumerator())
+            using (var secondEnumerator = second.GetEnumerator()) {
+                foreach (var result in first.Zip(second:second, resultSelector:resultSelector)) {
+                    AssertAreEqual(expected:true, actual:firstEnumerator.MoveNext());
+                    AssertAreEqual(expected:true, actual:secondEnumerator.MoveNext());
+                    AssertAreEqual(
+                        expected:true,
+                        actual:resultTester(arg1:firstEnumerator.Current, arg2:secondEnumerator.Current, arg3:result)
+                    );
+                    ++visited;
+                }
+                AssertAreEqual(expected:false, actual:firstEnumerator.MoveNext() && secondEnumerator.MoveNext());
             }
-            AssertAreEqual(expected:Math.Min(val1:first.Count, val2:second.Count), actual:visited);
+            AssertAreEqual(expected:Math.Min(val1:first.Count(), val2:second.Count()), actual:visited);
         }
     }
     
