@@ -372,21 +372,24 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Append<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void Append<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
         )
-            where TEnumerator : IAdaptableEnumerator<int> 
+            where TEnumerator : IAdaptableEnumerator<TSource> 
         {
-            Append(source:empty, element:0);
-            Append(source:repeat, element:1);
-            Append(source:sequence, element:5);
+            Append(source:empty, element:default);
+            Append(source:repeat, element:default);
+            Append(source:sequence, element:default);
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Append<TEnumerator> (EnumerableAdapter<TEnumerator, int> source, int element) 
-            where TEnumerator : IAdaptableEnumerator<int> 
+        private static void Append<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            TSource element
+        ) 
+            where TEnumerator : IAdaptableEnumerator<TSource> 
         {
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
@@ -472,26 +475,29 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Cast<TEnumerable, TCast> (
-            EnumerableAdapter<TEnumerable, int> empty,
-            EnumerableAdapter<TEnumerable, int> repeat,
-            EnumerableAdapter<TEnumerable, int> sequence,
-            Func<int, TCast> resultSelector
+        private static void Cast<TEnumerable, TSource, TCast> (
+            EnumerableAdapter<TEnumerable, TSource> empty,
+            EnumerableAdapter<TEnumerable, TSource> repeat,
+            EnumerableAdapter<TEnumerable, TSource> sequence,
+            Func<TSource, TCast> resultSelector
         )
-            where TEnumerable : IAdaptableEnumerator<int>
+            where TEnumerable : IAdaptableEnumerator<TSource>
             where TCast : IConvertible
         {
-            Cast<TEnumerable, TCast>(source:empty, resultSelector:(value) => throw new InvalidOperationException());
+            Cast<TEnumerable, TSource, TCast>(
+                source:empty, 
+                resultSelector:(value) => throw new InvalidOperationException()
+            );
             Cast(source:repeat, resultSelector:resultSelector);
             Cast(source:sequence, resultSelector:resultSelector);
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Cast<TEnumerable, TCast> (
-            EnumerableAdapter<TEnumerable, int> source, 
-            Func<int, TCast> resultSelector
+        private static void Cast<TEnumerable, TSource, TCast> (
+            EnumerableAdapter<TEnumerable, TSource> source, 
+            Func<TSource, TCast> resultSelector
         )
-            where TEnumerable : IAdaptableEnumerator<int>
+            where TEnumerable : IAdaptableEnumerator<TSource>
             where TCast : IConvertible
         {
             var visited = 0;
@@ -531,8 +537,8 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Concat<TEnumerator> (EnumerableAdapter<TEnumerator, int> source) 
-            where TEnumerator : IAdaptableEnumerator<int>
+        private static void Concat<TEnumerator, TSource> (EnumerableAdapter<TEnumerator, TSource> source) 
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
@@ -556,59 +562,87 @@ namespace Tests.EditMode {
                 code:() => Contains(
                     empty:s_emptyArray.AsEnumerable(), 
                     repeat:s_repeatArray.AsEnumerable(), 
-                    sequence:s_sequenceArray.AsEnumerable()
+                    repeatHas:1,
+                    repeatMissing:0,
+                    sequence:s_sequenceArray.AsEnumerable(),
+                    sequenceHas:0,
+                    sequenceMissing:6
                 )
             );
             TestNoGC(
                 code:() => Contains(
                     empty:s_emptyHashSet.AsEnumerable(), 
                     repeat:s_repeatHashSet.AsEnumerable(), 
-                    sequence:s_sequenceHashSet.AsEnumerable()
+                    repeatHas:1,
+                    repeatMissing:0,
+                    sequence:s_sequenceHashSet.AsEnumerable(),
+                    sequenceHas:0,
+                    sequenceMissing:6
                 )
             );
             TestNoGC(
                 code:() => Contains(
                     empty:s_emptyIList.AsEnumerable(), 
                     repeat:s_repeatIList.AsEnumerable(), 
-                    sequence:s_sequenceIList.AsEnumerable()
+                    repeatHas:1,
+                    repeatMissing:0,
+                    sequence:s_sequenceIList.AsEnumerable(),
+                    sequenceHas:0,
+                    sequenceMissing:6
                 )
             );
             TestNoGC(
                 code:() => Contains(
                     empty:s_emptyIReadOnlyList.AsEnumerable(), 
                     repeat:s_repeatIReadOnlyList.AsEnumerable(), 
-                    sequence:s_sequenceIReadOnlyList.AsEnumerable()
+                    repeatHas:1,
+                    repeatMissing:0,
+                    sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                    sequenceHas:0,
+                    sequenceMissing:6
                 )
             );
             TestNoGC(
                 code:() => Contains(
                     empty:s_emptyLinkedList.AsEnumerable(), 
                     repeat:s_repeatLinkedList.AsEnumerable(), 
-                    sequence:s_sequenceLinkedList.AsEnumerable()
+                    repeatHas:1,
+                    repeatMissing:0,
+                    sequence:s_sequenceLinkedList.AsEnumerable(),
+                    sequenceHas:0,
+                    sequenceMissing:6
                 )
             );
             TestNoGC(
                 code:() => Contains(
                     empty:s_emptyList.AsEnumerable(), 
                     repeat:s_repeatList.AsEnumerable(), 
-                    sequence:s_sequenceList.AsEnumerable()
+                    repeatHas:1,
+                    repeatMissing:0,
+                    sequence:s_sequenceList.AsEnumerable(),
+                    sequenceHas:0,
+                    sequenceMissing:6
                 )
             );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Contains<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void Contains<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            TSource repeatHas,
+            TSource repeatMissing,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            TSource sequenceHas,
+            TSource sequenceMissing
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
-            ValidateIsFalse(code:() => empty.Contains(value:0));
-            ValidateIsTrue(code:() => repeat.Contains(value:1));
-            ValidateIsTrue(code:() => sequence.Contains(value:0));
-            ValidateIsFalse(code:() => repeat.Contains(value:0));
-            ValidateIsFalse(code:() => sequence.Contains(value:6));
+            AssertAreEqual(expected:false, actual:empty.Contains(value:default));
+            AssertAreEqual(expected:true, actual:repeat.Contains(value:repeatHas));
+            AssertAreEqual(expected:false, actual:repeat.Contains(value:repeatMissing));
+            AssertAreEqual(expected:true, actual:sequence.Contains(value:sequenceHas));
+            AssertAreEqual(expected:false, actual:sequence.Contains(value:sequenceMissing));
         }
 
         //--------------------------------------------------------------------------------------------------------------
