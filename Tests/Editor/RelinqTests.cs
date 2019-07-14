@@ -2637,92 +2637,156 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Take () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
+            Take(
+                empty:s_emptyArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Take(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Take(
+                empty:s_emptyIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Take(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Take(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Take(
+                empty:s_emptyList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Take<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             TestNoGC(code:() => Take(source:empty, count:0, taken:0, remaining:0));
             TestNoGC(code:() => Take(source:empty, count:1, taken:0, remaining:0));
             TestNoGC(code:() => Take(source:empty, count:10, taken:0, remaining:0));
-            TestNoGC(code:() => Take(source:same, count:0, taken:0, remaining:3));
-            TestNoGC(code:() => Take(source:same, count:1, taken:1, remaining:2));
-            TestNoGC(code:() => Take(source:same, count:10, taken:3, remaining:0));
-            TestNoGC(code:() => Take(source:diff, count:0, taken:0, remaining:3));
-            TestNoGC(code:() => Take(source:diff, count:1, taken:1, remaining:2));
-            TestNoGC(code:() => Take(source:diff, count:10, taken:3, remaining:0));
+            TestNoGC(code:() => Take(source:sequence, count:0, taken:0, remaining:5));
+            TestNoGC(code:() => Take(source:sequence, count:1, taken:1, remaining:4));
+            TestNoGC(code:() => Take(source:sequence, count:10, taken:5, remaining:0));
         }
-        
+
         //--------------------------------------------------------------------------------------------------------------
-        private static void Take<TSource> (
-            List<TSource> source, 
+        private static void Take<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
             int count, 
             int taken, 
             int remaining
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             var visited = 0;
-            foreach (var result in enumerable.Take(count:count)) {
-                AssertAreEqual(expected:source[index:visited], actual:result);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var result in source.Take(count:count)) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:result);
+                    ++visited;
+                }
             }
             AssertAreEqual(expected:taken, actual:visited);
-            AssertAreEqual(expected:remaining, actual:source.Count - visited);
+            AssertAreEqual(expected:remaining, actual:source.Count() - visited);
         }
         
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void TakeWhile () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
-            TakeWhile(source:empty, count:0, taken:0, remaining:0);
-            TakeWhile(source:empty, count:1, taken:0, remaining:0);
-            TakeWhile(source:empty, count:10, taken:0, remaining:0);
-            TakeWhile(source:same, count:0, taken:0, remaining:3);
-            TakeWhile(source:same, count:1, taken:1, remaining:2);
-            TakeWhile(source:same, count:10, taken:3, remaining:0);
-            TakeWhile(source:diff, count:0, taken:0, remaining:3);
-            TakeWhile(source:diff, count:1, taken:1, remaining:2);
-            TakeWhile(source:diff, count:10, taken:3, remaining:0);
+            TakeWhile(
+                empty:s_emptyArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            TakeWhile(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            TakeWhile(
+                empty:s_emptyIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            TakeWhile(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            TakeWhile(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            TakeWhile(
+                empty:s_emptyList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void TakeWhile<TSource> (
-            List<TSource> source, 
-            int count, 
-            int taken, 
+        private static void TakeWhile<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
+            TakeWhile(source:empty, count:0, taken:0, remaining:0);
+            TakeWhile(source:empty, count:1, taken:0, remaining:0);
+            TakeWhile(source:empty, count:10, taken:0, remaining:0);
+            TakeWhile(source:sequence, count:0, taken:0, remaining:5);
+            TakeWhile(source:sequence, count:1, taken:1, remaining:4);
+            TakeWhile(source:sequence, count:10, taken:5, remaining:0);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void TakeWhile<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source,
+            int count,
+            int taken,
             int remaining
-        ) {
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             //  Using a lambda rather than a local function allows us to capture outside of the Validate.
             // ReSharper disable once ConvertToLocalFunction
             // ReSharper disable once ImplicitlyCapturedClosure
             Func<TSource, int, bool> predicate = (value, index) => index < count;
             TestNoGC(
                 code:() => TakeWhile(
-                    source:source,
-                    taken:taken,
-                    remaining:remaining,
+                    source:source, 
+                    count:count, 
+                    taken:taken, 
+                    remaining:remaining, 
                     predicate:predicate
                 )
             );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void TakeWhile<TSource> (
-            List<TSource> source,
+        private static void TakeWhile<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source,
+            int count,
             int taken,
             int remaining,
             Func<TSource, int, bool> predicate
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TEnumerator : IAdaptableEnumerator<TSource>
+        {
             var visited = 0;
-            foreach (var result in enumerable.TakeWhile(predicate:predicate)) {
-                AssertAreEqual(expected:source[index:visited], actual:result);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var result in source.TakeWhile(predicate:predicate)) {
+                    AssertAreEqual(expected:true, actual:enumerator.MoveNext());
+                    AssertAreEqual(expected:enumerator.Current, actual:result);
+                    ++visited;
+                }
             }
             AssertAreEqual(expected:taken, actual:visited);
-            AssertAreEqual(expected:remaining, actual:source.Count - visited);
+            AssertAreEqual(expected:remaining, actual:source.Count() - visited);
         }
 
         //--------------------------------------------------------------------------------------------------------------
