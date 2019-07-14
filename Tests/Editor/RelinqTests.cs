@@ -55,7 +55,7 @@ namespace Tests.EditMode {
             
             throw new ArgumentException(message:$"{expected} vs {actual}");
         }
-
+        
         //--------------------------------------------------------------------------------------------------------------
         // ReSharper disable once InconsistentNaming
         private static void TestNoGC (TestDelegate code) {
@@ -1164,7 +1164,6 @@ namespace Tests.EditMode {
             AssertAreEqual(expected:source.Count, actual:visited);
         }
 
-
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Last () {
@@ -1395,118 +1394,296 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Max () {
-            var empty = new List<int>().AsEnumerable();
-            var same = new List<int>(collection:new[] { 0, 0, 0 }).AsEnumerable();
-            var diff = new List<int>(collection:new[] { 0, 1, 2 }).AsEnumerable();
-            var nullable = new List<int?>(collection:new int?[] { 0, default, 4 }).AsEnumerable();
-            
+            Max(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Max(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Max(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Max(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Max(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Max(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Max<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             Assert.Throws<InvalidOperationException>(code:() => empty.Max());
-            TestNoGC(code:() => same.Max(), expected:0);
-            TestNoGC(code:() => diff.Max(), expected:2);
-            TestNoGC(code:() => nullable.Max(), expected:4);
+            TestNoGC(code:() => repeat.Max(), expected:1);
+            TestNoGC(code:() => sequence.Max(), expected:4);
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Min () {
-            var empty = new List<int>().AsEnumerable();
-            var same = new List<int>(collection:new[] { 0, 0, 0 }).AsEnumerable();
-            var diff = new List<int>(collection:new[] { 0, 1, 2 }).AsEnumerable();
-            var nullable = new List<int?>(collection:new int?[] { 0, default, 4 }).AsEnumerable();
-            
+            Min(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Min(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Min(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Min(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Min(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Min(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Min<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             Assert.Throws<InvalidOperationException>(code:() => empty.Min());
-            TestNoGC(code:() => same.Min(), expected:0);
-            TestNoGC(code:() => diff.Min(), expected:0);
-            TestNoGC(code:() => nullable.Min(), expected:0);
+            TestNoGC(code:() => repeat.Min(), expected:1);
+            TestNoGC(code:() => sequence.Min(), expected:0);
         }
         
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Mismatch () {
-            var empty = new List<int>();
-            var same = new List<int>(collection:new[] { 0, 0, 0 });
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            var also = new List<int>(collection:new[] { 0, 1, 2 });
-            
-            TestNoGC(code:() => Mismatch(expected:0, first:empty, second:same));
-            TestNoGC(code:() => Mismatch(expected:0, first:empty, second:diff));
-            TestNoGC(code:() => Mismatch(expected:0, first:empty, second:also));
-            TestNoGC(code:() => Mismatch(expected:0, first:same, second:empty));
-            TestNoGC(code:() => Mismatch(expected:1, first:same, second:diff));
-            TestNoGC(code:() => Mismatch(expected:1, first:same, second:also));
-            TestNoGC(code:() => Mismatch(expected:0, first:diff, second:empty));
-            TestNoGC(code:() => Mismatch(expected:1, first:diff, second:same));
-            TestNoGC(code:() => Mismatch(expected:default, first:diff, second:also));
-            TestNoGC(code:() => Mismatch(expected:0, first:also, second:empty));
-            TestNoGC(code:() => Mismatch(expected:1, first:also, second:same));
-            TestNoGC(code:() => Mismatch(expected:default, first:also, second:diff));
+            Mismatch(
+                empty:s_emptyArray.AsEnumerable(), 
+                repeat:s_repeatArray.AsEnumerable(), 
+                sequence:s_sequenceArray.AsEnumerable()
+            );
+            Mismatch(
+                empty:s_emptyHashSet.AsEnumerable(), 
+                repeat:s_repeatHashSet.AsEnumerable(), 
+                sequence:s_sequenceHashSet.AsEnumerable()
+            );
+            Mismatch(
+                empty:s_emptyIList.AsEnumerable(), 
+                repeat:s_repeatIList.AsEnumerable(), 
+                sequence:s_sequenceIList.AsEnumerable()
+            );
+            Mismatch(
+                empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                sequence:s_sequenceIReadOnlyList.AsEnumerable()
+            );
+            Mismatch(
+                empty:s_emptyLinkedList.AsEnumerable(), 
+                repeat:s_repeatLinkedList.AsEnumerable(), 
+                sequence:s_sequenceLinkedList.AsEnumerable()
+            );
+            Mismatch(
+                empty:s_emptyList.AsEnumerable(), 
+                repeat:s_repeatList.AsEnumerable(), 
+                sequence:s_sequenceList.AsEnumerable()
+            );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Mismatch<TSource> (int? expected, List<TSource> first, List<TSource> second) {
-            var firstAdapter = first.AsEnumerable();
-            var secondAdapter = second.AsEnumerable();
+        private static void Mismatch<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty, 
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            TestNoGC(code:() => Mismatch(expected:0, first:empty, second:repeat));
+            TestNoGC(code:() => Mismatch(expected:0, first:empty, second:sequence));
+            TestNoGC(code:() => Mismatch(expected:0, first:repeat, second:empty));
+            TestNoGC(code:() => Mismatch(expected:0, first:repeat, second:sequence));
+            TestNoGC(code:() => Mismatch(expected:0, first:sequence, second:empty));
+            TestNoGC(code:() => Mismatch(expected:0, first:sequence, second:repeat));
+        }
 
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Mismatch<TEnumerator> (
+            int? expected, 
+            EnumerableAdapter<TEnumerator, int> first, 
+            EnumerableAdapter<TEnumerator, int> second
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
             // ReSharper disable once JoinDeclarationAndInitializer
             int? result;
 
-            result = firstAdapter.Mismatch(second:firstAdapter);
+            result = first.Mismatch(second:first);
             AssertAreEqual(expected:default, actual:result);
 
-            result = firstAdapter.Mismatch(second:firstAdapter, comparer:EqualityComparer<TSource>.Default);
+            result = first.Mismatch(second:first, comparer:EqualityComparer<int>.Default);
             AssertAreEqual(expected:default, actual:result);
 
-            result = secondAdapter.Mismatch(second:secondAdapter);
+            result = second.Mismatch(second:second);
             AssertAreEqual(expected:default, actual:result);
 
-            result = secondAdapter.Mismatch(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
+            result = second.Mismatch(second:second, comparer:EqualityComparer<int>.Default);
             AssertAreEqual(expected:default, actual:result);
 
-            result = firstAdapter.Mismatch(second:secondAdapter);
+            result = first.Mismatch(second:second);
             AssertAreEqual(expected:expected, actual:result);
 
-            result = firstAdapter.Mismatch(second:secondAdapter, comparer:EqualityComparer<TSource>.Default);
+            result = first.Mismatch(second:second, comparer:EqualityComparer<int>.Default);
             AssertAreEqual(expected:expected, actual:result);
         }
         
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void None () {
-            var empty = new List<int>().AsEnumerable();
-            var same = new List<int>(collection:new[] { 0, 0, 0 }).AsEnumerable();
-            var diff = new List<int>(collection:new[] { 0, 1, 2 }).AsEnumerable();
-            
-            ValidateIsFalse(code:() => same.None());
-            ValidateIsFalse(code:() => diff.None());
-            ValidateIsFalse(code:() => same.None(predicate:(value) => value == 0));
-            ValidateIsFalse(code:() => diff.None(predicate:(value) => value == 0));
+            TestNoGC(
+                code:() => None(
+                    empty:s_emptyArray.AsEnumerable(), 
+                    repeat:s_repeatArray.AsEnumerable(), 
+                    sequence:s_sequenceArray.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => None(
+                    empty:s_emptyHashSet.AsEnumerable(), 
+                    repeat:s_repeatHashSet.AsEnumerable(), 
+                    sequence:s_sequenceHashSet.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => None(
+                    empty:s_emptyIList.AsEnumerable(), 
+                    repeat:s_repeatIList.AsEnumerable(), 
+                    sequence:s_sequenceIList.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => None(
+                    empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                    repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                    sequence:s_sequenceIReadOnlyList.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => None(
+                    empty:s_emptyLinkedList.AsEnumerable(), 
+                    repeat:s_repeatLinkedList.AsEnumerable(), 
+                    sequence:s_sequenceLinkedList.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => None(
+                    empty:s_emptyList.AsEnumerable(), 
+                    repeat:s_repeatList.AsEnumerable(), 
+                    sequence:s_sequenceList.AsEnumerable()
+                )
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void None<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int>
+        {
+            ValidateIsFalse(code:() => repeat.None());
+            ValidateIsFalse(code:() => sequence.None());
+            ValidateIsFalse(code:() => repeat.None(predicate:(value) => value == 1));
+            ValidateIsFalse(code:() => sequence.None(predicate:(value) => value == 0));
             ValidateIsTrue(code:() => empty.None());
             ValidateIsTrue(code:() => empty.None(predicate:(value) => throw new InvalidOperationException()));
-            ValidateIsTrue(code:() => same.None(predicate:(value) => value < 0));
-            ValidateIsTrue(code:() => diff.None(predicate:(value) => value < 0));
+            ValidateIsTrue(code:() => repeat.None(predicate:(value) => value < 1));
+            ValidateIsTrue(code:() => sequence.None(predicate:(value) => value < 0));
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void OfType () {
-            var empty = new List<object>();
-            var diff = new List<object>(collection:new object[] { 0, "1", "2", typeof(Type) });
-            
-            TestNoGC(code:() => OfType<object>(source:empty, expected:0));
-            TestNoGC(code:() => OfType<Type>(source:empty, expected:0));
-            TestNoGC(code:() => OfType<string>(source:empty, expected:0));
-            TestNoGC(code:() => OfType<object>(source:diff, expected:4));
-            TestNoGC(code:() => OfType<Type>(source:diff, expected:1));
-            TestNoGC(code:() => OfType<string>(source:diff, expected:2));
+            OfType(
+                empty:new object[] {}.AsEnumerable(), 
+                full:new object[] { 0, "1", "2", typeof(Type) }.AsEnumerable()
+            );
+            OfType(
+                empty:new HashSet<object>().AsEnumerable(), 
+                full:new HashSet<object>(collection:new object[] { 0, "1", "2", typeof(Type) }).AsEnumerable()
+            );
+            OfType(
+                empty:((IList<object>)new List<object>()).AsEnumerable(), 
+                full:((IList<object>)new List<object> { 0, "1", "2", typeof(Type) }).AsEnumerable()
+            );
+            OfType(
+                empty:((IReadOnlyList<object>)new List<object>()).AsEnumerable(), 
+                full:((IReadOnlyList<object>)new List<object> { 0, "1", "2", typeof(Type) }).AsEnumerable()
+            );
+            OfType(
+                empty:new LinkedList<object>().AsEnumerable(), 
+                full:new LinkedList<object>(collection:new object[] { 0, "1", "2", typeof(Type) }).AsEnumerable()
+            );
+            OfType(
+                empty:new List<object>().AsEnumerable(), 
+                full:new List<object>(collection:new object[] { 0, "1", "2", typeof(Type) }).AsEnumerable()
+            );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void OfType<TResult> (List<object> source, int expected) 
+        private static void OfType<TEnumerator> (
+            EnumerableAdapter<TEnumerator, object> empty,
+            EnumerableAdapter<TEnumerator, object> full
+        )
+            where TEnumerator : IAdaptableEnumerator<object>
+        {
+            TestNoGC(code:() => OfType<TEnumerator, object>(source:empty, expected:0));
+            TestNoGC(code:() => OfType<TEnumerator, Type>(source:empty, expected:0));
+            TestNoGC(code:() => OfType<TEnumerator, string>(source:empty, expected:0));
+            TestNoGC(code:() => OfType<TEnumerator, object>(source:full, expected:4));
+            TestNoGC(code:() => OfType<TEnumerator, Type>(source:full, expected:1));
+            TestNoGC(code:() => OfType<TEnumerator, string>(source:full, expected:2));
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void OfType<TEnumerator, TResult> (EnumerableAdapter<TEnumerator, object> source, int expected) 
+            where TEnumerator : IAdaptableEnumerator<object>
             where TResult : class
         {
-            var enumerable = source.AsEnumerable();
             var visited = 0;
-            foreach (var _ in enumerable.OfType<TResult>()) {
+            foreach (var _ in source.OfType<TResult>()) {
                 ++visited;
             }
             AssertAreEqual(expected:expected, actual:visited);
@@ -1515,33 +1692,87 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Prepend () {
-            var empty = new List<int>();
-            var diff = new List<int>(collection:new[] { 0, 1, 2 });
-            
-            TestNoGC(code:() => Prepend(source:empty, element:0));
-            TestNoGC(code:() => Prepend(source:diff, element:-1));
+            TestNoGC(
+                code:() => Prepend(
+                    empty:s_emptyArray.AsEnumerable(), 
+                    repeat:s_repeatArray.AsEnumerable(), 
+                    sequence:s_sequenceArray.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => Prepend(
+                    empty:s_emptyHashSet.AsEnumerable(), 
+                    repeat:s_repeatHashSet.AsEnumerable(), 
+                    sequence:s_sequenceHashSet.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => Prepend(
+                    empty:s_emptyIList.AsEnumerable(), 
+                    repeat:s_repeatIList.AsEnumerable(), 
+                    sequence:s_sequenceIList.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => Prepend(
+                    empty:s_emptyIReadOnlyList.AsEnumerable(), 
+                    repeat:s_repeatIReadOnlyList.AsEnumerable(), 
+                    sequence:s_sequenceIReadOnlyList.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => Prepend(
+                    empty:s_emptyLinkedList.AsEnumerable(), 
+                    repeat:s_repeatLinkedList.AsEnumerable(), 
+                    sequence:s_sequenceLinkedList.AsEnumerable()
+                )
+            );
+            TestNoGC(
+                code:() => Prepend(
+                    empty:s_emptyList.AsEnumerable(), 
+                    repeat:s_repeatList.AsEnumerable(), 
+                    sequence:s_sequenceList.AsEnumerable()
+                )
+            );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Prepend<TSource> (List<TSource> source, TSource element) {
-            var enumerable = source.AsEnumerable();
+        private static void Prepend<TEnumerator> (
+            EnumerableAdapter<TEnumerator, int> empty,
+            EnumerableAdapter<TEnumerator, int> repeat,
+            EnumerableAdapter<TEnumerator, int> sequence
+        )
+            where TEnumerator : IAdaptableEnumerator<int> 
+        {
+            Prepend(source:empty, element:0);
+            Prepend(source:repeat, element:1);
+            Prepend(source:sequence, element:5);
+        }
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static void Prepend<TEnumerator> (EnumerableAdapter<TEnumerator, int> source, int element) 
+            where TEnumerator : IAdaptableEnumerator<int> 
+        {
             var visited = 0;
-            foreach (var test in enumerable.Prepend(element:element)) {
-                var value = visited > 0 ? source[index:visited - 1] : element;
-                AssertAreEqual(expected:value, actual:test);
-                ++visited;
+            using (var enumerator = source.GetEnumerator()) {
+                foreach (var test in source.Prepend(element:element)) {
+                    var value = visited > 0 && enumerator.MoveNext() ? enumerator.Current : element;
+                    AssertAreEqual(expected:value, actual:test);
+                    ++visited;
+                }
+                AssertAreEqual(expected:false, actual:enumerator.MoveNext());
             }
-            AssertAreEqual(expected:source.Count + 1, actual:visited);
+            AssertAreEqual(expected:1 + source.Count(), actual:visited);
         }
 
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Queue () {
             var empty = new Queue<int>();
-            var diff = new Queue<int> { 0, 1, 2, };
+            var sequence = new Queue<int> { 0, 1, 2, };
             
             TestNoGC(code:() => Queue(source:empty));
-            TestNoGC(code:() => Queue(source:diff));
+            TestNoGC(code:() => Queue(source:sequence));
         }
         
         //--------------------------------------------------------------------------------------------------------------
@@ -2099,10 +2330,10 @@ namespace Tests.EditMode {
         [Test]
         public static void Stack () {
             var empty = new Stack<int>();
-            var diff = new Stack<int> { 0, 1, 2, };
+            var sequence = new Stack<int> { 0, 1, 2, };
             
             TestNoGC(code:() => Stack(source:empty));
-            TestNoGC(code:() => Stack(source:diff));
+            TestNoGC(code:() => Stack(source:sequence));
         }
         
         //--------------------------------------------------------------------------------------------------------------
