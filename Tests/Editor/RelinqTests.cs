@@ -57,6 +57,21 @@ namespace Tests.EditMode {
         }
         
         //--------------------------------------------------------------------------------------------------------------
+        private static HashSet<T> NewHashSet<T> (T value) => new HashSet<T> { value, };
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static IList<T> NewIList<T> (T value) => new List<T> { value, };
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static IReadOnlyList<T> NewIReadOnlyList<T> (T value) => new List<T> { value, };
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static LinkedList<T> NewLinkedList<T> (T value) => new LinkedList<T> { value, };
+        
+        //--------------------------------------------------------------------------------------------------------------
+        private static List<T> NewList<T> (T value) => new List<T> { value, };
+        
+        //--------------------------------------------------------------------------------------------------------------
         // ReSharper disable once InconsistentNaming
         private static void TestNoGC (TestDelegate code) {
             code();
@@ -2142,91 +2157,478 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void SelectMany () {
-            var empty = new List<List<int>>();
-            var diff = new List<List<int>>(
-                collection:new[] { new List<int>(), new List<int>(collection:new[] { 0, 1, 2 })}
+            SelectMany(
+                empty:new[] { s_emptyArray, }.AsEnumerable(),
+                sequence:new[] { s_sequenceArray, }.AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:new[] { s_emptyHashSet, }.AsEnumerable(),
+                sequence:new[] { s_sequenceHashSet, }.AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:new[] { s_emptyIList, }.AsEnumerable(),
+                sequence:new[] { s_sequenceIList, }.AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:new[] { s_emptyIReadOnlyList, }.AsEnumerable(),
+                sequence:new[] { s_sequenceIReadOnlyList, }.AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:new[] { s_emptyLinkedList, }.AsEnumerable(),
+                sequence:new[] { s_sequenceLinkedList, }.AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:new[] { s_emptyList, }.AsEnumerable(),
+                sequence:new[] { s_sequenceList, }.AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
             );
             
-            TestNoGC(code:() => SelectMany(source:empty, selector:(source) => source.AsEnumerable(), expected:0));
-            TestNoGC(
-                code:() => SelectMany(source:empty, selector:(source, index) => source.AsEnumerable(), expected:0)
+            SelectMany(
+                empty:NewHashSet(value:s_emptyArray).AsEnumerable(),
+                sequence:NewHashSet(value:s_sequenceArray).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
             );
+            SelectMany(
+                empty:NewHashSet(value:s_emptyHashSet).AsEnumerable(),
+                sequence:NewHashSet(value:s_sequenceHashSet).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewHashSet(value:s_emptyIList).AsEnumerable(),
+                sequence:NewHashSet(value:s_sequenceIList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewHashSet(value:s_emptyIReadOnlyList).AsEnumerable(),
+                sequence:NewHashSet(value:s_sequenceIReadOnlyList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewHashSet(value:s_emptyLinkedList).AsEnumerable(),
+                sequence:NewHashSet(value:s_sequenceLinkedList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewHashSet(value:s_emptyList).AsEnumerable(),
+                sequence:NewHashSet(value:s_sequenceList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            
+            SelectMany(
+                empty:NewIList(value:s_emptyArray).AsEnumerable(),
+                sequence:NewIList(value:s_sequenceArray).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIList(value:s_emptyHashSet).AsEnumerable(),
+                sequence:NewIList(value:s_sequenceHashSet).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIList(value:s_emptyIList).AsEnumerable(),
+                sequence:NewIList(value:s_sequenceIList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIList(value:s_emptyIReadOnlyList).AsEnumerable(),
+                sequence:NewIList(value:s_sequenceIReadOnlyList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIList(value:s_emptyLinkedList).AsEnumerable(),
+                sequence:NewIList(value:s_sequenceLinkedList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIList(value:s_emptyList).AsEnumerable(),
+                sequence:NewIList(value:s_sequenceList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            
+            SelectMany(
+                empty:NewIReadOnlyList(value:s_emptyArray).AsEnumerable(),
+                sequence:NewIReadOnlyList(value:s_sequenceArray).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIReadOnlyList(value:s_emptyHashSet).AsEnumerable(),
+                sequence:NewIReadOnlyList(value:s_sequenceHashSet).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIReadOnlyList(value:s_emptyIList).AsEnumerable(),
+                sequence:NewIReadOnlyList(value:s_sequenceIList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIReadOnlyList(value:s_emptyIReadOnlyList).AsEnumerable(),
+                sequence:NewIReadOnlyList(value:s_sequenceIReadOnlyList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIReadOnlyList(value:s_emptyLinkedList).AsEnumerable(),
+                sequence:NewIReadOnlyList(value:s_sequenceLinkedList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewIReadOnlyList(value:s_emptyList).AsEnumerable(),
+                sequence:NewIReadOnlyList(value:s_sequenceList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            
+            SelectMany(
+                empty:NewLinkedList(value:s_emptyArray).AsEnumerable(),
+                sequence:NewLinkedList(value:s_sequenceArray).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewLinkedList(value:s_emptyHashSet).AsEnumerable(),
+                sequence:NewLinkedList(value:s_sequenceHashSet).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewLinkedList(value:s_emptyIList).AsEnumerable(),
+                sequence:NewLinkedList(value:s_sequenceIList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewLinkedList(value:s_emptyIReadOnlyList).AsEnumerable(),
+                sequence:NewLinkedList(value:s_sequenceIReadOnlyList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewLinkedList(value:s_emptyLinkedList).AsEnumerable(),
+                sequence:NewLinkedList(value:s_sequenceLinkedList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewLinkedList(value:s_emptyList).AsEnumerable(),
+                sequence:NewLinkedList(value:s_sequenceList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            
+            SelectMany(
+                empty:NewList(value:s_emptyArray).AsEnumerable(),
+                sequence:NewList(value:s_sequenceArray).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewList(value:s_emptyHashSet).AsEnumerable(),
+                sequence:NewList(value:s_sequenceHashSet).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewList(value:s_emptyIList).AsEnumerable(),
+                sequence:NewList(value:s_sequenceIList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewList(value:s_emptyIReadOnlyList).AsEnumerable(),
+                sequence:NewList(value:s_sequenceIReadOnlyList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewList(value:s_emptyLinkedList).AsEnumerable(),
+                sequence:NewList(value:s_sequenceLinkedList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+            SelectMany(
+                empty:NewList(value:s_emptyList).AsEnumerable(),
+                sequence:NewList(value:s_sequenceList).AsEnumerable(),
+                selector:(source) => source.AsEnumerable(),
+                selectorIndexed:(source, index) => source.AsEnumerable(),
+                collectionSelector:(source) => source.AsEnumerable(),
+                collectionSelectorIndexed:(source, index) => source.AsEnumerable(),
+                resultSelector:(source, indirect) => (float)indirect
+            );
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        private static void SelectMany<
+            TOuterEnumerator, 
+            TInnerEnumerable, 
+            TIndirectEnumerator,
+            TIndirect,
+            TResult
+        > (
+            EnumerableAdapter<TOuterEnumerator, TInnerEnumerable> empty,
+            EnumerableAdapter<TOuterEnumerator, TInnerEnumerable> sequence,
+            Func<TInnerEnumerable, EnumerableAdapter<TIndirectEnumerator, TIndirect>> selector,
+            Func<TInnerEnumerable, int, EnumerableAdapter<TIndirectEnumerator, TIndirect>> selectorIndexed,
+            Func<TInnerEnumerable, EnumerableAdapter<TIndirectEnumerator, TIndirect>> collectionSelector,
+            Func<TInnerEnumerable, int, EnumerableAdapter<TIndirectEnumerator, TIndirect>> collectionSelectorIndexed,
+            Func<TInnerEnumerable, TIndirect, TResult> resultSelector
+        )
+            where TOuterEnumerator : IAdaptableEnumerator<TInnerEnumerable>
+            where TIndirectEnumerator : IAdaptableEnumerator<TIndirect>
+        {
             TestNoGC(
                 code:() => SelectMany(
                     source:empty, 
-                    collectionSelector:(source) => source.AsEnumerable(), 
-                    resultSelector:(source, indirect) => (float)indirect, 
+                    selector:selector, 
                     expected:0
                 )
             );
             TestNoGC(
                 code:() => SelectMany(
                     source:empty, 
-                    collectionSelector:(source, index) => source.AsEnumerable(), 
-                    resultSelector:(source, indirect) => (float)indirect, 
+                    selector:selectorIndexed, 
                     expected:0
                 )
             );
-            TestNoGC(code:() => SelectMany(source:diff, selector:(source) => source.AsEnumerable(), expected:3));
-            TestNoGC(
-                code:() => SelectMany(source:diff, selector:(source, index) => source.AsEnumerable(), expected:3)
-            );
             TestNoGC(
                 code:() => SelectMany(
-                    source:diff, 
-                    collectionSelector:(source) => source.AsEnumerable(), 
-                    resultSelector:(source, indirect) => (float)indirect, 
-                    expected:3
+                    source:empty, 
+                    collectionSelector:collectionSelector, 
+                    resultSelector:resultSelector, 
+                    expected:0
                 )
             );
             TestNoGC(
                 code:() => SelectMany(
-                    source:diff, 
-                    collectionSelector:(source, index) => source.AsEnumerable(), 
-                    resultSelector:(source, indirect) => (float)indirect, 
-                    expected:3
+                    source:empty, 
+                    collectionSelector:collectionSelectorIndexed, 
+                    resultSelector:resultSelector, 
+                    expected:0
+                )
+            );
+            TestNoGC(
+                code:() => SelectMany(
+                    source:sequence, 
+                    selector:selector, 
+                    expected:5
+                )
+            );
+            TestNoGC(
+                code:() => SelectMany(
+                    source:sequence, 
+                    selector:selectorIndexed, 
+                    expected:5
+                )
+            );
+            TestNoGC(
+                code:() => SelectMany(
+                    source:sequence, 
+                    collectionSelector:collectionSelector, 
+                    resultSelector:resultSelector, 
+                    expected:5
+                )
+            );
+            TestNoGC(
+                code:() => SelectMany(
+                    source:sequence, 
+                    collectionSelector:collectionSelectorIndexed, 
+                    resultSelector:resultSelector, 
+                    expected:5
                 )
             );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SelectMany<TSource, TResult> (
-            List<List<TSource>> source,
-            Func<List<TSource>, EnumerableAdapter<ListEnumerator<TResult>, TResult>> selector,
+        private static void SelectMany<
+            TOuterEnumerator, 
+            TInnerEnumerable, 
+            TResultEnumerator, 
+            TResult
+        > (
+            EnumerableAdapter<TOuterEnumerator, TInnerEnumerable> source,
+            Func<TInnerEnumerable, EnumerableAdapter<TResultEnumerator, TResult>> selector,
             int expected
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TOuterEnumerator : IAdaptableEnumerator<TInnerEnumerable>
+            where TResultEnumerator : IAdaptableEnumerator<TResult>
+        {
             var visited = 0;
-            foreach (var _ in enumerable.SelectMany(selector:selector)) {
+            foreach (var _ in source.SelectMany(selector:selector)) {
                 ++visited;
             }
             AssertAreEqual(expected:expected, actual:visited);
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SelectMany<TSource, TResult> (
-            List<List<TSource>> source,
-            Func<List<TSource>, int, EnumerableAdapter<ListEnumerator<TResult>, TResult>> selector,
+        private static void SelectMany<
+            TOuterEnumerator, 
+            TInnerEnumerable, 
+            TResultEnumerator, 
+            TResult
+        > (
+            EnumerableAdapter<TOuterEnumerator, TInnerEnumerable> source,
+            Func<TInnerEnumerable, int, EnumerableAdapter<TResultEnumerator, TResult>> selector,
             int expected
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TOuterEnumerator : IAdaptableEnumerator<TInnerEnumerable>
+            where TResultEnumerator : IAdaptableEnumerator<TResult>
+        {
             var visited = 0;
-            foreach (var _ in enumerable.SelectMany(selector:selector)) {
+            foreach (var _ in source.SelectMany(selector:selector)) {
                 ++visited;
             }
             AssertAreEqual(expected:expected, actual:visited);
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SelectMany<TSource, TIndirect, TResult> (
-            List<List<TSource>> source,
-            Func<List<TSource>, EnumerableAdapter<ListEnumerator<TIndirect>, TIndirect>> collectionSelector,
-            Func<List<TSource>, TIndirect, TResult> resultSelector,
+        private static void SelectMany<
+            TOuterEnumerator, 
+            TInnerEnumerable, 
+            TIndirectEnumerator,
+            TIndirect,
+            TResult
+        > (
+            EnumerableAdapter<TOuterEnumerator, TInnerEnumerable> source,
+            Func<TInnerEnumerable, EnumerableAdapter<TIndirectEnumerator, TIndirect>> collectionSelector,
+            Func<TInnerEnumerable, TIndirect, TResult> resultSelector,
             int expected
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TOuterEnumerator : IAdaptableEnumerator<TInnerEnumerable>
+            where TIndirectEnumerator : IAdaptableEnumerator<TIndirect>
+        {
             var visited = 0;
-            foreach (var _ in enumerable.SelectMany(
+            foreach (var _ in source.SelectMany(
                     collectionSelector:collectionSelector, 
                     resultSelector:resultSelector
                 )
@@ -2237,15 +2639,23 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void SelectMany<TSource, TIndirect, TResult> (
-            List<List<TSource>> source,
-            Func<List<TSource>, int, EnumerableAdapter<ListEnumerator<TIndirect>, TIndirect>> collectionSelector,
-            Func<List<TSource>, TIndirect, TResult> resultSelector,
+        private static void SelectMany<
+            TOuterEnumerator, 
+            TInnerEnumerable, 
+            TIndirectEnumerator,
+            TIndirect,
+            TResult
+        > (
+            EnumerableAdapter<TOuterEnumerator, TInnerEnumerable> source,
+            Func<TInnerEnumerable, int, EnumerableAdapter<TIndirectEnumerator, TIndirect>> collectionSelector,
+            Func<TInnerEnumerable, TIndirect, TResult> resultSelector,
             int expected
-        ) {
-            var enumerable = source.AsEnumerable();
+        )
+            where TOuterEnumerator : IAdaptableEnumerator<TInnerEnumerable>
+            where TIndirectEnumerator : IAdaptableEnumerator<TIndirect>
+        {
             var visited = 0;
-            foreach (var _ in enumerable.SelectMany(
+            foreach (var _ in source.SelectMany(
                     collectionSelector:collectionSelector, 
                     resultSelector:resultSelector
                 )
