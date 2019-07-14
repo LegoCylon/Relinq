@@ -135,6 +135,3 @@ The algorithms use stack memory embedded in value type structs to maintain state
 The value type enumerables use [duck typing](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/foreach-in) to facilitate foreach support rather than implementing `IEnumerable` or `IEnumerator`. This helps to avoid accidentally creating garbage when trying to pass the enumerables around.
 
 Although most of the algorithms themselves (with unavoidable exceptions like `ToList`) don't generate heap allocations, you may still generate them at the callsite if state is captured from the callsite (i.e. via a lambda closure). Consider using a [local function](https://docs.microsoft.com/en-us/dotnet/csharp/local-functions-vs-lambdas) where possible to reduce the cost of capturing.
-
-# To Do
-  * [ ] Update all tests to support all enumerables
