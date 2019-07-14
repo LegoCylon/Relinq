@@ -648,84 +648,109 @@ namespace Tests.EditMode {
         //--------------------------------------------------------------------------------------------------------------
         [Test]
         public static void Count () {
+            Func<int, bool> repeatHas = (value) => value == 1;
+            Func<int, bool> repeatMissing = (value) => value != 1;
+            Func<int, bool> sequenceHas = (value) => value < 5;
+            Func<int, bool> sequenceMissing = (value) => value > 5;
             TestNoGC(
                 code:() => Count(
                     empty:s_emptyArray.AsEnumerable(),
                     repeat:s_repeatArray.AsEnumerable(),
-                    sequence:s_sequenceArray.AsEnumerable(),
+                    repeatHas:repeatHas,
+                    repeatMissing:repeatMissing,
                     repeatCount:5,
-                    sequenceZeroCount:1,
-                    sequenceTotalCount:5
+                    sequence:s_sequenceArray.AsEnumerable(),
+                    sequenceHas:sequenceHas,
+                    sequenceMissing:sequenceMissing,
+                    sequenceCount:5
                 )
             );
             TestNoGC(
                 code:() => Count(
                     empty:s_emptyHashSet.AsEnumerable(),
                     repeat:s_repeatHashSet.AsEnumerable(),
-                    sequence:s_sequenceHashSet.AsEnumerable(),
+                    repeatHas:repeatHas,
+                    repeatMissing:repeatMissing,
                     repeatCount:1,
-                    sequenceZeroCount:1,
-                    sequenceTotalCount:5
+                    sequence:s_sequenceHashSet.AsEnumerable(),
+                    sequenceHas:sequenceHas,
+                    sequenceMissing:sequenceMissing,
+                    sequenceCount:5
                 )
             );
             TestNoGC(
                 code:() => Count(
                     empty:s_emptyIList.AsEnumerable(),
                     repeat:s_repeatIList.AsEnumerable(),
-                    sequence:s_sequenceIList.AsEnumerable(),
+                    repeatHas:repeatHas,
+                    repeatMissing:repeatMissing,
                     repeatCount:5,
-                    sequenceZeroCount:1,
-                    sequenceTotalCount:5
+                    sequence:s_sequenceIList.AsEnumerable(),
+                    sequenceHas:sequenceHas,
+                    sequenceMissing:sequenceMissing,
+                    sequenceCount:5
                 )
             );
             TestNoGC(
                 code:() => Count(
                     empty:s_emptyIReadOnlyList.AsEnumerable(),
                     repeat:s_repeatIReadOnlyList.AsEnumerable(),
-                    sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                    repeatHas:repeatHas,
+                    repeatMissing:repeatMissing,
                     repeatCount:5,
-                    sequenceZeroCount:1,
-                    sequenceTotalCount:5
+                    sequence:s_sequenceIReadOnlyList.AsEnumerable(),
+                    sequenceHas:sequenceHas,
+                    sequenceMissing:sequenceMissing,
+                    sequenceCount:5
                 )
             );
             TestNoGC(
                 code:() => Count(
                     empty:s_emptyLinkedList.AsEnumerable(),
                     repeat:s_repeatLinkedList.AsEnumerable(),
-                    sequence:s_sequenceLinkedList.AsEnumerable(),
+                    repeatHas:repeatHas,
+                    repeatMissing:repeatMissing,
                     repeatCount:5,
-                    sequenceZeroCount:1,
-                    sequenceTotalCount:5
+                    sequence:s_sequenceLinkedList.AsEnumerable(),
+                    sequenceHas:sequenceHas,
+                    sequenceMissing:sequenceMissing,
+                    sequenceCount:5
                 )
             );
             TestNoGC(
                 code:() => Count(
                     empty:s_emptyList.AsEnumerable(),
                     repeat:s_repeatList.AsEnumerable(),
-                    sequence:s_sequenceList.AsEnumerable(),
+                    repeatHas:repeatHas,
+                    repeatMissing:repeatMissing,
                     repeatCount:5,
-                    sequenceZeroCount:1,
-                    sequenceTotalCount:5
+                    sequence:s_sequenceList.AsEnumerable(),
+                    sequenceHas:sequenceHas,
+                    sequenceMissing:sequenceMissing,
+                    sequenceCount:5
                 )
             );
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Count<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence,
+        private static void Count<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            Func<TSource, bool> repeatHas,
+            Func<TSource, bool> repeatMissing,
             int repeatCount,
-            int sequenceZeroCount,
-            int sequenceTotalCount
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> sequenceHas,
+            Func<TSource, bool> sequenceMissing,
+            int sequenceCount
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             AssertAreEqual(expected:0, actual:empty.Count(predicate:(value) => throw new InvalidOperationException()));
-            AssertAreEqual(expected:repeatCount, actual:repeat.Count(predicate:(value) => value == 1));
-            AssertAreEqual(expected:sequenceZeroCount, actual:sequence.Count(predicate:(value) => value == 0));
-            AssertAreEqual(expected:repeatCount, actual:repeat.Count(predicate:(value) => value > 0));
-            AssertAreEqual(expected:sequenceTotalCount, actual:sequence.Count(predicate:(value) => value < 5));
+            AssertAreEqual(expected:repeatCount, actual:repeat.Count(predicate:repeatHas));
+            AssertAreEqual(expected:0, actual:repeat.Count(predicate:repeatMissing));
+            AssertAreEqual(expected:sequenceCount, actual:sequence.Count(predicate:sequenceHas));
+            AssertAreEqual(expected:0, actual:sequence.Count(predicate:sequenceMissing));
         } 
 
         //--------------------------------------------------------------------------------------------------------------
@@ -841,12 +866,12 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void ElementAt<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void ElementAt<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             ElementAt(source:empty);
             ElementAt(source:repeat);
@@ -854,8 +879,8 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void ElementAt<TEnumerator> (EnumerableAdapter<TEnumerator, int> source)
-            where TEnumerator : IAdaptableEnumerator<int>
+        private static void ElementAt<TEnumerator, TSource> (EnumerableAdapter<TEnumerator, TSource> source)
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(code:() => {
                 var visited = 0;
@@ -907,12 +932,12 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void ElementAtOrDefault<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void ElementAtOrDefault<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             ElementAtOrDefault(source:empty);
             ElementAtOrDefault(source:repeat);
@@ -920,8 +945,8 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void ElementAtOrDefault<TEnumerator> (EnumerableAdapter<TEnumerator, int> source)
-            where TEnumerator : IAdaptableEnumerator<int>
+        private static void ElementAtOrDefault<TEnumerator, TSource> (EnumerableAdapter<TEnumerator, TSource> source)
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(code:() => {
                 var visited = 0;
@@ -992,13 +1017,13 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void First<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence,
-            Func<int, bool> predicate
+        private static void First<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             Assert.Throws<InvalidOperationException>(code:() => First(source:empty, predicate:predicate));
             Assert.Throws<InvalidOperationException>(
@@ -1018,11 +1043,11 @@ namespace Tests.EditMode {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void First<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> source, 
-            Func<int, bool> predicate
+        private static void First<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             using (var enumerator = source.GetEnumerator()) {
                 var result = source.First(predicate:predicate);
@@ -1081,13 +1106,13 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void FirstOrDefault<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence,
-            Func<int, bool> predicate
+        private static void FirstOrDefault<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(code:() => FirstOrDefault(source:empty, predicate:predicate));
             TestNoGC(
@@ -1105,11 +1130,11 @@ namespace Tests.EditMode {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void FirstOrDefault<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> source, 
-            Func<int, bool> predicate
+        private static void FirstOrDefault<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             using (var enumerator = source.GetEnumerator()) {
                 var result = source.FirstOrDefault(predicate:predicate);
@@ -1240,13 +1265,14 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Last<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence,
-            Func<int, bool> predicate
+        private static void Last<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TSource : struct
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             Assert.Throws<InvalidOperationException>(code:() => Last(source:empty, predicate:predicate));
             Assert.Throws<InvalidOperationException>(
@@ -1266,15 +1292,16 @@ namespace Tests.EditMode {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Last<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> source, 
-            Func<int, bool> predicate
+        private static void Last<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TSource : struct
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             using (var enumerator = source.GetEnumerator()) {
                 var result = source.Last(predicate:predicate);
-                int? last = default;
+                TSource? last = default;
                 while (enumerator.MoveNext()) {
                     var expected = enumerator.Current;
                     if (!predicate(arg:expected)) {
@@ -1331,13 +1358,13 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void LastOrDefault<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence,
-            Func<int, bool> predicate
+        private static void LastOrDefault<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence,
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(code:() => LastOrDefault(source:empty, predicate:predicate));
             TestNoGC(
@@ -1355,15 +1382,15 @@ namespace Tests.EditMode {
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void LastOrDefault<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> source, 
-            Func<int, bool> predicate
+        private static void LastOrDefault<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            Func<TSource, bool> predicate
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             using (var enumerator = source.GetEnumerator()) {
                 var result = source.LastOrDefault(predicate:predicate);
-                int last = default;
+                TSource last = default;
                 while (enumerator.MoveNext()) {
                     var expected = enumerator.Current;
                     if (!predicate(arg:expected)) {
@@ -1557,12 +1584,12 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Mismatch<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty, 
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void Mismatch<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty, 
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             TestNoGC(code:() => Mismatch(expected:0, first:empty, second:repeat));
             TestNoGC(code:() => Mismatch(expected:0, first:empty, second:sequence));
@@ -1573,12 +1600,12 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Mismatch<TEnumerator> (
+        private static void Mismatch<TEnumerator, TSource> (
             int? expected, 
-            EnumerableAdapter<TEnumerator, int> first, 
-            EnumerableAdapter<TEnumerator, int> second
+            EnumerableAdapter<TEnumerator, TSource> first, 
+            EnumerableAdapter<TEnumerator, TSource> second
         )
-            where TEnumerator : IAdaptableEnumerator<int>
+            where TEnumerator : IAdaptableEnumerator<TSource>
         {
             // ReSharper disable once JoinDeclarationAndInitializer
             int? result;
@@ -1586,19 +1613,19 @@ namespace Tests.EditMode {
             result = first.Mismatch(second:first);
             AssertAreEqual(expected:default, actual:result);
 
-            result = first.Mismatch(second:first, comparer:EqualityComparer<int>.Default);
+            result = first.Mismatch(second:first, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:default, actual:result);
 
             result = second.Mismatch(second:second);
             AssertAreEqual(expected:default, actual:result);
 
-            result = second.Mismatch(second:second, comparer:EqualityComparer<int>.Default);
+            result = second.Mismatch(second:second, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:default, actual:result);
 
             result = first.Mismatch(second:second);
             AssertAreEqual(expected:expected, actual:result);
 
-            result = first.Mismatch(second:second, comparer:EqualityComparer<int>.Default);
+            result = first.Mismatch(second:second, comparer:EqualityComparer<TSource>.Default);
             AssertAreEqual(expected:expected, actual:result);
         }
         
@@ -1771,21 +1798,24 @@ namespace Tests.EditMode {
         }
 
         //--------------------------------------------------------------------------------------------------------------
-        private static void Prepend<TEnumerator> (
-            EnumerableAdapter<TEnumerator, int> empty,
-            EnumerableAdapter<TEnumerator, int> repeat,
-            EnumerableAdapter<TEnumerator, int> sequence
+        private static void Prepend<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> empty,
+            EnumerableAdapter<TEnumerator, TSource> repeat,
+            EnumerableAdapter<TEnumerator, TSource> sequence
         )
-            where TEnumerator : IAdaptableEnumerator<int> 
+            where TEnumerator : IAdaptableEnumerator<TSource> 
         {
-            Prepend(source:empty, element:0);
-            Prepend(source:repeat, element:1);
-            Prepend(source:sequence, element:5);
+            Prepend(source:empty, element:default);
+            Prepend(source:repeat, element:default);
+            Prepend(source:sequence, element:default);
         }
         
         //--------------------------------------------------------------------------------------------------------------
-        private static void Prepend<TEnumerator> (EnumerableAdapter<TEnumerator, int> source, int element) 
-            where TEnumerator : IAdaptableEnumerator<int> 
+        private static void Prepend<TEnumerator, TSource> (
+            EnumerableAdapter<TEnumerator, TSource> source, 
+            TSource element
+        ) 
+            where TEnumerator : IAdaptableEnumerator<TSource> 
         {
             var visited = 0;
             using (var enumerator = source.GetEnumerator()) {
